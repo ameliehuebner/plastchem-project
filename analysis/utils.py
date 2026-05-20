@@ -70,7 +70,7 @@ def load_plastchem(path: Path) -> pd.DataFrame:
     Returns
     -------
     pd.Dataframe
-        The PlastChem Database, multindexed using the cols_dict.
+        The PlastChem Database, indexed by merging the multiindexed in the cols_dict.
     """
     plast_chem = pd.read_csv(path, sep="\t", decimal=',', low_memory=False)
     # remove empty columns and rows
@@ -88,15 +88,9 @@ def load_plastchem(path: Path) -> pd.DataFrame:
     # replace all commas with dots
     pcc = df_plast_chem.columns
     df_plast_chem = df_plast_chem[2:].stack().str.replace(',','.').unstack()
+    df_plast_chem = df_plast_chem.reset_index()
     return df_plast_chem, pcc
 
-
-def get_MI_tupels(data, vars: list):
-    cols_to_use = []
-    for top_level in vars:
-        # Get all columns under the given top-level category from multiindex
-        cols_to_use.extend([col for col in data.columns if col[0] == top_level])
-    return cols_to_use
 
 def extract_feature_vecs(data: pd.DataFrame, vars: list, n):
     """
@@ -116,5 +110,49 @@ def extract_feature_vecs(data: pd.DataFrame, vars: list, n):
     X = cleaned_subset.to_numpy()
     feature_vectors = PCA(n_components=n).fit_transform(X)
     return feature_vectors
+ 
+########################################################################## RDKit utils
+import pandas as pd
+import numpy as np
+import math
+
+# rdkit tutorial steal
+from rdkit import Chem, DataStructs
+from rdkit.Chem import AllChem, Draw
+from IPython.display import SVG
+
+def calculate_mfps(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
+
+    fingerprints = []
+    mfp_generator = AllChem.GetMorganGenerator(radius=6, includeChirality = True)
+
+    for mol in data[column_name]:#.dropna(axis=0):
+        try:
+            chem_mol = Chem.MolFromSmiles(mol)
+    
+            fp = mfp_generator.GetFingerprint(chem_mol)
+
+            arr = np.zeros((fp.GetNumBits(),), dtype=int)
+            AllChem.DataStructs.ConvertToNumpyArray(fp, arr)
+            fingerprints.append(arr)
+        except Exception as e:
+            fingerprints.append(None)
+            #its all nan errors so fuck them
+            # print(f"Error for {mol}: {e}")
+
+
+    data['Properties_morgan_fingerprint'] = fingerprints
+
+        # mfp2_svg = Draw.DrawMorganBit(m1, list(bi.keys())[1], bi, useSVG=True)
+        # drawer = Draw.rdMolDraw2D.MolDraw2DSVG(450, 150)
+        # #draw the molecule
+        # drawer.DrawMolecule(m1)
+        # drawer.FinishDrawing()
+        # # get the SVG string
+        # svg = drawer.GetDrawingText()
+        # # fix the svg string and display it
+        # display(SVG(svg.replace('svg:','')))
+
+    #DataStructs.DiceSimilarity(fp1,fp2)
 
 

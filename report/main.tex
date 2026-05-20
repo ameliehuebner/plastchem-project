@@ -1,0 +1,66 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage[
+backend=biber,
+bibstyle=authoryear,
+citestyle=authoryear, 
+sorting=anyt, 
+giveninits=true,
+maxcitenames=2
+]{biblatex}
+\addbibresource{refs.bib}
+
+\title{Title muss ich mir noch ausdenken}
+\author{Amelie Hübner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Dataset and problem setting}
+Dieses Dokument wird meine Projektarbeit
+\parencite{Monclus}
+% Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
+
+\section{XGBoost}
+% Modellannahme, Parameterschätzung und Inferenz mathematisch sauber erklärt.
+% Eventuelle Vorverarbeitung der Daten und mögliche Optimierungen erklärt.
+% Grenzen des Modells aufgezeigt. Pseudocode für Lernverfahren.
+
+% Modellstruktur und Modellannahmen
+
+% Grenzen des Modells
+
+\section{Search Strategy}
+% Sinnvolle Performance Kriterien. Kreuzvalidierung für beste Hyperparameterwahl.
+% Vergleich mit Baselines, weiterführende Analyse des gelernten Modells.
+% Aus Beschreibung bleiben keine Fragen offen.
+% Ergebnisse können reproduziert werden.
+% Detaillierte Diskussion aller Ergebnisse.
+
+
+\section{Results}
+\label{sec:results}
+
+
+\appendix
+\renewcommand{\thefigure}{\Alph{section}\arabic{figure}}
+\setcounter{figure}{0}
+\renewcommand{\thealgorithm}{\Alph{section}\arabic{algorithm}}
+\setcounter{algorithm}{0}
+\section{Additional Figures}
+
+\clearpage
+\printbibliography 
+\end{document}
+
+
+

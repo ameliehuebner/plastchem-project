@@ -1,0 +1,124 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global/global}
+    \entry{Monclus}{article}{}{}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=c16535190582c838a4f5a7098f0abfd1}{%
+           family={Monclús},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0138eab02bedfd02f1b152a860457e1f}{%
+           family={Arp},
+           familyi={A\bibinitperiod},
+           given={H.\bibnamedelimi P.\bibnamedelimi H.},
+           giveni={H\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=742551ca5d05ec3c493d1b3f76555a91}{%
+           family={Groh},
+           familyi={G\bibinitperiod},
+           given={K.\bibnamedelimi J.},
+           giveni={K\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=93aeeeef46ffaef33f31603e0f7d8236}{%
+           family={Faltynkova},
+           familyi={F\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=23334d3a46a1daa6d8d45b857a5b0ce2}{%
+           family={Løseth},
+           familyi={L\bibinitperiod},
+           given={M.\bibnamedelimi E.},
+           giveni={M\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c1caa12362f63477460a13e213f2bef1}{%
+           family={Muncke},
+           familyi={M\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cc4aadc875d7abdbaf96dfa4a83d8b77}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Z.},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=604335a9acf6c7a491df83af50e7b7ab}{%
+           family={Wolf},
+           familyi={W\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d24122d4966805e4a92679e688aeb884}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8aeaf8a0d313a9a1a67eb58d7420478f}{%
+           family={Wagner},
+           familyi={W\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{2}{%
+        {Springer Science}%
+        {Business Media LLC}%
+      }
+      \strng{namehash}{5c22f21efe4896d33b4187252785b3df}
+      \strng{fullhash}{b3c6b090d51c13775374285f7c7f8fcf}
+      \strng{fullhashraw}{b3c6b090d51c13775374285f7c7f8fcf}
+      \strng{bibnamehash}{5c22f21efe4896d33b4187252785b3df}
+      \strng{authorbibnamehash}{5c22f21efe4896d33b4187252785b3df}
+      \strng{authornamehash}{5c22f21efe4896d33b4187252785b3df}
+      \strng{authorfullhash}{b3c6b090d51c13775374285f7c7f8fcf}
+      \strng{authorfullhashraw}{b3c6b090d51c13775374285f7c7f8fcf}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1476-4687}
+      \field{journaltitle}{Nature}
+      \field{number}{8071}
+      \field{title}{Mapping the chemical complexity of plastics}
+      \field{volume}{643}
+      \field{year}{2025}
+      \field{pages}{349\bibrangedash 355}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1038/s41586-025-09184-8
+      \endverb
+      \verb{urlraw}
+      \verb http://dx.doi.org/10.1038/s41586-025-09184-8
+      \endverb
+      \verb{url}
+      \verb http://dx.doi.org/10.1038/s41586-025-09184-8
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
