@@ -60,7 +60,7 @@ col_dict = {
 # import data
 def load_plastchem(path: Path) -> pd.DataFrame:
     """
-    Reads in the PlastChem database. 
+    Reads in the PlastChem database and sets correct datatype.
 
     Parameters
     ----------
@@ -80,15 +80,34 @@ def load_plastchem(path: Path) -> pd.DataFrame:
     # reindexing and multiindexing, then combining multiindex into one → easier to work with (naming convention is higherlevel_lower)
     tuples = [(k, i) for k, v in col_dict.items() for i in v]
     index = pd.MultiIndex.from_tuples(tuples)
-    df_plast_chem = plast_chem[1:]
+    df_plast_chem = plast_chem[1:].copy()
     df_plast_chem.columns = ["_".join(col) for col in index.to_flat_index()]
+
+    # remove all rows that do not have a valid cas rn
+    df_plast_chem.dropna(axis=0, subset=['Identifiers_cas'], inplace=True)
     
     # drop first row → now obsolete
-    df_plast_chem.dropna(axis=0, subset=['Identifiers_plastchem_ID'])
+    #df_plast_chem.dropna(axis=0, subset=['Identifiers_plastchem_ID'], inplace=True)
     # replace all commas with dots
     pcc = df_plast_chem.columns
     df_plast_chem = df_plast_chem[2:].stack().str.replace(',','.').unstack()
     df_plast_chem = df_plast_chem.reset_index()
+
+    # protected_cols = [
+    #     "canonical_smiles",
+    #     "isomeric_smiles",
+    #     "inchi",
+    #     "inchikey",
+    #     "cas",
+    #     "iupac_name"
+    # ]
+
+    hazard_cols = [col for col in df_plast_chem.columns if col.startswith("Hazard_information_")]
+
+    df_plast_chem[hazard_cols] = df_plast_chem[hazard_cols].apply(
+        pd.to_numeric,
+        errors="coerce"
+    )
     return df_plast_chem, pcc
 
 
@@ -121,27 +140,30 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem, Draw
 from IPython.display import SVG
 
-def calculate_mfps(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
+def calculate_mfps(data: pd.DataFrame, column_name: str):
 
-    fingerprints = []
-    mfp_generator = AllChem.GetMorganGenerator(radius=6, includeChirality = True)
+    fps = []
+    mfp_generator = AllChem.GetMorganGenerator(radius=2, fpSize=2048, includeChirality = True)
 
-    for mol in data[column_name]:#.dropna(axis=0):
+    for smile in data[column_name]:#.dropna(axis=0):
+        if pd.isna(smile):
+            fps.append(None)
+            continue
         try:
-            chem_mol = Chem.MolFromSmiles(mol)
-    
-            fp = mfp_generator.GetFingerprint(chem_mol)
-
+            mol = Chem.MolFromSmiles(smile)
+            if mol is None:
+                fps.append(None)
+                continue
+            fp = mfp_generator.GetFingerprint(mol)
             arr = np.zeros((fp.GetNumBits(),), dtype=int)
             AllChem.DataStructs.ConvertToNumpyArray(fp, arr)
-            fingerprints.append(arr)
+            fps.append(arr)
         except Exception as e:
-            fingerprints.append(None)
+            fps.append(None)
             #its all nan errors so fuck them
             # print(f"Error for {mol}: {e}")
 
-
-    data['Properties_morgan_fingerprint'] = fingerprints
+    return fps
 
         # mfp2_svg = Draw.DrawMorganBit(m1, list(bi.keys())[1], bi, useSVG=True)
         # drawer = Draw.rdMolDraw2D.MolDraw2DSVG(450, 150)
@@ -154,5 +176,6 @@ def calculate_mfps(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
         # display(SVG(svg.replace('svg:','')))
 
     #DataStructs.DiceSimilarity(fp1,fp2)
+
 
 
