@@ -1,0 +1,96 @@
+
+EnvironmentNameNotFound: Could not find conda environment: pcp
+You can list all discoverable environments with `conda info --envs`.
+
+
+INFO: Create ssh tunnel from your pc using: ssh -L 35212:node001:35212  ki64cah@login1.draco.uni-jena.de
+INFO: You can also use draco instead of ara
+[I 2026-06-30 15:49:05.272 ServerApp] jupyter_lsp | extension was successfully linked.
+[I 2026-06-30 15:49:05.277 ServerApp] jupyter_server_terminals | extension was successfully linked.
+[I 2026-06-30 15:49:05.281 ServerApp] jupyterlab | extension was successfully linked.
+[I 2026-06-30 15:49:05.285 ServerApp] notebook | extension was successfully linked.
+[I 2026-06-30 15:49:05.287 ServerApp] Writing Jupyter server cookie secret to /home/ki64cah/.local/share/jupyter/runtime/jupyter_cookie_secret
+[I 2026-06-30 15:49:05.764 ServerApp] notebook_shim | extension was successfully linked.
+[I 2026-06-30 15:49:05.765 ServerApp] panel.io.jupyter_server_extension | extension was successfully linked.
+[I 2026-06-30 15:49:05.791 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2026-06-30 15:49:05.793 ServerApp] jupyter_lsp | extension was successfully loaded.
+[I 2026-06-30 15:49:05.795 ServerApp] jupyter_server_terminals | extension was successfully loaded.
+[I 2026-06-30 15:49:05.802 LabApp] JupyterLab extension loaded from /cluster/ecosystems/anaconda3/2024.10/lib/python3.12/site-packages/jupyterlab
+[I 2026-06-30 15:49:05.803 LabApp] JupyterLab application directory is /cluster/ecosystems/anaconda3/2024.10/share/jupyter/lab
+[I 2026-06-30 15:49:05.804 LabApp] Extension Manager is 'pypi'.
+[I 2026-06-30 15:49:05.875 LabApp] Extensions will be fetched using proxy, proxy host and port: ('internet4nzm.rz.uni-jena.de', '3128')
+[I 2026-06-30 15:49:05.878 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2026-06-30 15:49:05.883 ServerApp] notebook | extension was successfully loaded.
+[I 2026-06-30 15:49:05.884 ServerApp] panel.io.jupyter_server_extension | extension was successfully loaded.
+[I 2026-06-30 15:49:05.885 ServerApp] Serving notebooks from local directory: /work/ki64cah/plast-chem
+[I 2026-06-30 15:49:05.885 ServerApp] Jupyter Server 2.14.1 is running at:
+[I 2026-06-30 15:49:05.885 ServerApp] http://node001:35212/lab?token=69bac4faf3a38dbb008cdc202f279e990ef474e844f69aa2
+[I 2026-06-30 15:49:05.886 ServerApp]     http://127.0.0.1:35212/lab?token=69bac4faf3a38dbb008cdc202f279e990ef474e844f69aa2
+[I 2026-06-30 15:49:05.886 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2026-06-30 15:49:05.898 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///home/ki64cah/.local/share/jupyter/runtime/jpserver-1271252-open.html
+    Or copy and paste one of these URLs:
+        http://node001:35212/lab?token=69bac4faf3a38dbb008cdc202f279e990ef474e844f69aa2
+        http://127.0.0.1:35212/lab?token=69bac4faf3a38dbb008cdc202f279e990ef474e844f69aa2
+[I 2026-06-30 15:49:06.219 ServerApp] Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[W 2026-06-30 15:57:21.964 LabApp] Could not determine jupyterlab build status without nodejs
+[I 2026-06-30 15:57:29.771 ServerApp] Writing notebook-signing key to /home/ki64cah/.local/share/jupyter/notebook_secret
+[W 2026-06-30 15:57:29.795 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 15:57:31.118 ServerApp] Kernel started: fbf77f36-8d59-4ee6-a0f5-0b179c176649
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 15:57:33.537 ServerApp] Connecting to kernel fbf77f36-8d59-4ee6-a0f5-0b179c176649.
+[I 2026-06-30 15:57:33.579 ServerApp] Connecting to kernel fbf77f36-8d59-4ee6-a0f5-0b179c176649.
+[I 2026-06-30 15:57:33.627 ServerApp] Connecting to kernel fbf77f36-8d59-4ee6-a0f5-0b179c176649.
+[I 2026-06-30 15:57:45.364 ServerApp] Saving file at /analysis/models.ipynb
+[W 2026-06-30 15:57:45.365 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 15:58:03.999 ServerApp] Kernel started: f71b9d8f-de4b-44b5-b7b5-142a49a9e56a
+[I 2026-06-30 15:58:04.000 ServerApp] Kernel shutdown: fbf77f36-8d59-4ee6-a0f5-0b179c176649
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 15:58:04.979 ServerApp] Connecting to kernel f71b9d8f-de4b-44b5-b7b5-142a49a9e56a.
+[I 2026-06-30 15:58:22.384 ServerApp] Kernel started: 7b9589de-6563-4808-b97d-103138aeb4e4
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 15:58:23.346 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 15:59:45.550 ServerApp] Saving file at /analysis/models.ipynb
+[W 2026-06-30 15:59:45.551 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 16:01:04.797 ServerApp] Kernel restarted: 7b9589de-6563-4808-b97d-103138aeb4e4
+[I 2026-06-30 16:01:04.813 ServerApp] Starting buffering for 7b9589de-6563-4808-b97d-103138aeb4e4:dc036815-118b-4d70-b9b7-80e6a58b6005
+[I 2026-06-30 16:01:04.862 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 16:01:04.863 ServerApp] Restoring connection for 7b9589de-6563-4808-b97d-103138aeb4e4:dc036815-118b-4d70-b9b7-80e6a58b6005
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 16:01:45.703 ServerApp] Saving file at /analysis/models.ipynb
+[W 2026-06-30 16:01:45.705 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 16:05:57.844 JupyterNotebookApp] 302 GET /tree/analysis/models.ipynb (9d54744b2d1d461abf9cc985d88a5497@172.16.10.1) 2.94ms
+[I 2026-06-30 16:06:01.143 ServerApp] Connecting to kernel f71b9d8f-de4b-44b5-b7b5-142a49a9e56a.
+[I 2026-06-30 16:06:01.185 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[W 2026-06-30 16:06:01.407 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 16:06:03.277 ServerApp] Connecting to kernel f71b9d8f-de4b-44b5-b7b5-142a49a9e56a.
+[I 2026-06-30 16:06:12.517 ServerApp] Connecting to kernel f71b9d8f-de4b-44b5-b7b5-142a49a9e56a.
+[I 2026-06-30 16:06:32.700 ServerApp] Kernel shutdown: f71b9d8f-de4b-44b5-b7b5-142a49a9e56a
+[I 2026-06-30 16:06:33.372 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 16:07:08.359 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 16:32:59.812 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[W 2026-06-30 16:33:01.565 LabApp] Could not determine jupyterlab build status without nodejs
+[I 2026-06-30 16:33:01.639 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 16:33:01.693 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[I 2026-06-30 16:33:02.303 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+[W 2026-06-30 16:33:02.855 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 16:33:04.524 ServerApp] Connecting to kernel 7b9589de-6563-4808-b97d-103138aeb4e4.
+slurmstepd: error: *** JOB 8387505 ON node001 CANCELLED AT 2026-06-30T17:01:20 ***

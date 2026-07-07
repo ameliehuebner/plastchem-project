@@ -1,0 +1,82 @@
+
+EnvironmentNameNotFound: Could not find conda environment: pcp
+You can list all discoverable environments with `conda info --envs`.
+
+
+INFO: Create ssh tunnel from your pc using: ssh -L 41284:node001:41284  ki64cah@login2.draco.uni-jena.de
+INFO: You can also use draco instead of ara
+[I 2026-06-30 17:03:06.313 ServerApp] jupyter_lsp | extension was successfully linked.
+[I 2026-06-30 17:03:06.317 ServerApp] jupyter_server_terminals | extension was successfully linked.
+[I 2026-06-30 17:03:06.321 ServerApp] jupyterlab | extension was successfully linked.
+[I 2026-06-30 17:03:06.325 ServerApp] notebook | extension was successfully linked.
+[I 2026-06-30 17:03:06.697 ServerApp] notebook_shim | extension was successfully linked.
+[I 2026-06-30 17:03:06.698 ServerApp] panel.io.jupyter_server_extension | extension was successfully linked.
+[I 2026-06-30 17:03:06.722 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2026-06-30 17:03:06.724 ServerApp] jupyter_lsp | extension was successfully loaded.
+[I 2026-06-30 17:03:06.726 ServerApp] jupyter_server_terminals | extension was successfully loaded.
+[I 2026-06-30 17:03:06.730 LabApp] JupyterLab extension loaded from /cluster/ecosystems/anaconda3/2024.10/lib/python3.12/site-packages/jupyterlab
+[I 2026-06-30 17:03:06.731 LabApp] JupyterLab application directory is /cluster/ecosystems/anaconda3/2024.10/share/jupyter/lab
+[I 2026-06-30 17:03:06.732 LabApp] Extension Manager is 'pypi'.
+[I 2026-06-30 17:03:06.826 LabApp] Extensions will be fetched using proxy, proxy host and port: ('internet4nzm.rz.uni-jena.de', '3128')
+[I 2026-06-30 17:03:06.830 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2026-06-30 17:03:06.837 ServerApp] notebook | extension was successfully loaded.
+[I 2026-06-30 17:03:06.838 ServerApp] panel.io.jupyter_server_extension | extension was successfully loaded.
+[I 2026-06-30 17:03:06.839 ServerApp] Serving notebooks from local directory: /work/ki64cah/plast-chem
+[I 2026-06-30 17:03:06.840 ServerApp] Jupyter Server 2.14.1 is running at:
+[I 2026-06-30 17:03:06.841 ServerApp] http://node001:41284/lab?token=c6873581793da62e9d2eb8b73e0e922f7aea413f336eef7d
+[I 2026-06-30 17:03:06.841 ServerApp]     http://127.0.0.1:41284/lab?token=c6873581793da62e9d2eb8b73e0e922f7aea413f336eef7d
+[I 2026-06-30 17:03:06.842 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2026-06-30 17:03:06.897 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///home/ki64cah/.local/share/jupyter/runtime/jpserver-1273429-open.html
+    Or copy and paste one of these URLs:
+        http://node001:41284/lab?token=c6873581793da62e9d2eb8b73e0e922f7aea413f336eef7d
+        http://127.0.0.1:41284/lab?token=c6873581793da62e9d2eb8b73e0e922f7aea413f336eef7d
+[I 2026-06-30 17:03:07.152 ServerApp] Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[W 2026-06-30 17:04:38.871 LabApp] Could not determine jupyterlab build status without nodejs
+[W 2026-06-30 17:04:40.459 ServerApp] Notebook analysis/models.ipynb is not trusted
+[I 2026-06-30 17:04:40.571 ServerApp] Kernel started: 3c4b510f-1f12-49dc-8281-21e897aeb98d
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 17:04:41.822 ServerApp] Connecting to kernel 3c4b510f-1f12-49dc-8281-21e897aeb98d.
+[I 2026-06-30 17:04:41.835 ServerApp] Kernel started: dd133e61-9bf3-4436-a171-eccef2be0994
+[I 2026-06-30 17:04:41.843 ServerApp] Connecting to kernel 3c4b510f-1f12-49dc-8281-21e897aeb98d.
+[I 2026-06-30 17:04:41.863 ServerApp] Connecting to kernel 3c4b510f-1f12-49dc-8281-21e897aeb98d.
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 17:04:42.762 ServerApp] Connecting to kernel dd133e61-9bf3-4436-a171-eccef2be0994.
+[I 2026-06-30 17:05:40.685 ServerApp] Kernel restarted: 3c4b510f-1f12-49dc-8281-21e897aeb98d
+[I 2026-06-30 17:05:40.696 ServerApp] Starting buffering for 3c4b510f-1f12-49dc-8281-21e897aeb98d:5345daab-6ac9-46cc-ac7d-e1f3799a91bb
+[I 2026-06-30 17:05:40.721 ServerApp] Connecting to kernel 3c4b510f-1f12-49dc-8281-21e897aeb98d.
+[I 2026-06-30 17:05:40.722 ServerApp] Restoring connection for 3c4b510f-1f12-49dc-8281-21e897aeb98d:5345daab-6ac9-46cc-ac7d-e1f3799a91bb
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+[I 2026-06-30 17:08:10.508 ServerApp] Kernel started: a036ff06-78b6-4cfe-9464-e52f7516dce1
+[I 2026-06-30 17:08:10.510 ServerApp] Kernel shutdown: 3c4b510f-1f12-49dc-8281-21e897aeb98d
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[I 2026-06-30 17:08:14.901 ServerApp] Connecting to kernel a036ff06-78b6-4cfe-9464-e52f7516dce1.
+[I 2026-06-30 17:08:34.594 ServerApp] Kernel started: e4e5fc47-0561-4961-95e5-58a8dec85dd2
+[I 2026-06-30 17:08:34.595 ServerApp] Kernel shutdown: dd133e61-9bf3-4436-a171-eccef2be0994
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[I 2026-06-30 17:08:36.061 ServerApp] Connecting to kernel e4e5fc47-0561-4961-95e5-58a8dec85dd2.
+[I 2026-06-30 17:08:36.089 ServerApp] Connecting to kernel e4e5fc47-0561-4961-95e5-58a8dec85dd2.
+[I 2026-06-30 17:08:39.776 ServerApp] Kernel started: 42301326-34cb-4d7f-9e2e-3c1019467035
+[I 2026-06-30 17:08:39.777 ServerApp] Kernel shutdown: e4e5fc47-0561-4961-95e5-58a8dec85dd2
+[I 2026-06-30 17:08:40.659 ServerApp] Saving file at /analysis/models.ipynb
+[W 2026-06-30 17:08:40.661 ServerApp] Notebook analysis/models.ipynb is not trusted
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[I 2026-06-30 17:08:40.928 ServerApp] Connecting to kernel 42301326-34cb-4d7f-9e2e-3c1019467035.
+[I 2026-06-30 17:10:41.738 ServerApp] Saving file at /analysis/models.ipynb
+[W 2026-06-30 17:10:41.740 ServerApp] Notebook analysis/models.ipynb is not trusted
+slurmstepd: error: *** JOB 8387536 ON node001 CANCELLED AT 2026-06-30T17:24:33 ***

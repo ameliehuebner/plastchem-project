@@ -12,22 +12,33 @@
 backend=biber,
 bibstyle=authoryear,
 citestyle=authoryear, 
-sorting=anyt, 
-giveninits=true,
+sorting=anyt,
 maxcitenames=2
 ]{biblatex}
 \addbibresource{refs.bib}
 
-\title{Title muss ich mir noch ausdenken}
+\title{Evaluating the prediction of the toxicity of plastic chemicals}
 \author{Amelie Hübner}
 \date{\today}
 
 \begin{document}
 \maketitle
 
+\section{Introduction}
+
+
+
 \section{Dataset and problem setting}
-Dieses Dokument wird meine Projektarbeit
-\parencite{Monclus}
+% Problem setting
+[plastik ist böse, hinführung zu degradation und additives sind böse, polyurethan domaine recycling ist schwer (chemisch)]
+The impact and scale of plastic production and consumption on the environment is steadily increasing. 
+In 2020, cumulative primary plastic production surpassed 10,000 million tonnes. 
+Suprisingly, only around 10\% of global plastic waste has ever been recycled.
+Of the remaining 90\%, 14\% have been incinerated, producing greenhouse gas emissions and releasing gaseous pollutants in the process.
+The remaining 76\% remain intact, leaching toxic chemicals and microplastics into the environment \parencite{walker}.
+
+
+The dataset was released by \cite{monclus_mapping_2025} and contains 16.325 known plastic chemicals.
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
 
 \section{XGBoost}
@@ -61,6 +72,7 @@ Dieses Dokument wird meine Projektarbeit
 \clearpage
 \printbibliography 
 \end{document}
+
 
 
 
