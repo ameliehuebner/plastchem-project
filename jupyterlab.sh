@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=jupyterlab
-#SBATCH --partition=interactive
+#SBATCH --partition=vis,standard,interactive
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
