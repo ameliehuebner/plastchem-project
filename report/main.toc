@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Dataset and problem setting}{4}{section.2}%
+\contentsline {section}{\numberline {3}Approach}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Data preprocessing}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Resampling strategies}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Model}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Hyperparameter Optimization}{5}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Results}{6}{section.4}%
+\contentsline {section}{\numberline {5}Discussion}{7}{section.5}%
+\contentsline {section}{\numberline {A}Implementation}{8}{appendix.A}%
+\contentsline {section}{\numberline {B}Additional Figures}{8}{appendix.B}%
