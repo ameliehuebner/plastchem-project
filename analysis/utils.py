@@ -111,7 +111,7 @@ def load_plastchem(path: Path) -> pd.DataFrame:
     return df_plast_chem, pcc
 
 
-def extract_feature_vecs(data: pd.DataFrame, vars: list, n):
+def extract_feature_vecs(data: pd.DataFrame | np.Array, n, vars=None):
     """
     Extract feature vectors from data using scikits implementation of PCA. 
 
@@ -123,12 +123,17 @@ def extract_feature_vecs(data: pd.DataFrame, vars: list, n):
         List of tuples of variable names for which to extract features.
     """
     # turn pandas df into numpy for PCA feature vector extraction
-    assert all(var in data.columns for var in vars), "Target variables not found in dataset"
-    subset = data[vars]
-    cleaned_subset = subset.dropna(axis=0)
-    X = cleaned_subset.to_numpy()
-    feature_vectors = PCA(n_components=n).fit_transform(X)
-    return feature_vectors
+    if vars is not None:
+        assert all(var in data.columns for var in vars), "Target variables not found in dataset"
+        subset = data[vars]
+        cleaned_subset = subset.dropna(axis=0)
+        X = cleaned_subset.to_numpy()
+
+    else:
+        X = data
+    pca = PCA(n_components=n)
+    feature_vectors = pca.fit_transform(X)
+    return feature_vectors, pca.explained_variance_ratio_
  
 ########################################################################## RDKit utils
 import pandas as pd
@@ -143,9 +148,9 @@ from IPython.display import SVG
 def calculate_mfps(data: pd.DataFrame, column_name: str):
 
     fps = []
-    mfp_generator = AllChem.GetMorganGenerator(radius=2, fpSize=2048, includeChirality = True)
+    mfp_generator = AllChem.GetMorganGenerator(radius=9, fpSize=2048, includeChirality = True)
 
-    for smile in data[column_name]:#.dropna(axis=0):
+    for smile in data[column_name]:
         if pd.isna(smile):
             fps.append(None)
             continue
@@ -160,22 +165,8 @@ def calculate_mfps(data: pd.DataFrame, column_name: str):
             fps.append(arr)
         except Exception as e:
             fps.append(None)
-            #its all nan errors so fuck them
-            # print(f"Error for {mol}: {e}")
 
     return fps
-
-        # mfp2_svg = Draw.DrawMorganBit(m1, list(bi.keys())[1], bi, useSVG=True)
-        # drawer = Draw.rdMolDraw2D.MolDraw2DSVG(450, 150)
-        # #draw the molecule
-        # drawer.DrawMolecule(m1)
-        # drawer.FinishDrawing()
-        # # get the SVG string
-        # svg = drawer.GetDrawingText()
-        # # fix the svg string and display it
-        # display(SVG(svg.replace('svg:','')))
-
-    #DataStructs.DiceSimilarity(fp1,fp2)
 
 
 

@@ -3,7 +3,7 @@
 #SBATCH --partition=vis,standard,interactive
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=32G
-#SBATCH --time=04:00:00
+#SBATCH --time=08:00:00
 #-- Activate your conda environment which contains the jupyter package
 source /home/$USER/.bashrc
 conda activate plastchem        # NOTE: you have to create an environment with the `jupyter` package
