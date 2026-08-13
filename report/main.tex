@@ -1,13 +1,13 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb}
 \usepackage{float}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-
+\usepackage{subcaption}
 \usepackage[
 backend=biber,
 bibstyle=authoryear,
@@ -15,31 +15,144 @@ citestyle=authoryear,
 sorting=anyt,
 maxcitenames=2
 ]{biblatex}
-\addbibresource{refs.bib}
+\addbibresource{plast-chem.bib}
 
-\title{Evaluating the prediction of the toxicity of plastic chemicals}
-\author{Amelie Hübner}
-\date{\today}
+\usepackage[a4paper, left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\baselineskip}
+
+
 
 \begin{document}
-\maketitle
+\begin{titlepage}
+	\centering
+    \includegraphics[width=0.3\textheight]{Uni_Jena_logo.png}\par\vspace{0.1cm}
+    \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.42\textwidth}
+            \includegraphics[width=0.25\textheight]{HZDR-Logo.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.57\textwidth}
+            \includegraphics[width=0.33\textheight]{HIF_logo.png}
+        \end{subfigure}
+    \end{figure}
+	{\Large \textsc{Project thesis}\par}
+	\vspace{1cm}
+	{\huge\bfseries Toxicity predicition of plastic chemicals\par}
+	\vspace{1cm}
+	{\Large Amelie Hübner\par}
+	\vfill
+	supervised by\par
+	Prof. Dr. Franziska Lederer \protect\footnote{Helmholtz-Zentrum Dresden-Rossendorf, Helmholtz Institute Freiberg for Resource Technology, Freiberg, Germany} \\
+    Dr. Sebastian Starke  \protect\footnote{Helmholtz-Zentrum Dresden-Rossendorf, Department of Information Services and Computing, Dresden, Germany}
+    \vfill
+
+% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+
+
+\tableofcontents
+\newpage
 
 \section{Introduction}
+%[plastik ist böse, hinführung zu degradation und additives sind böse, polyurethan domaine recycling ist schwer (chemisch)]
+The impact and scale of plastic production and consumption on the environment is steadily increasing. 
+In 2020, the world-wide cumulative primary plastic production surpassed 10~000 million tonnes. 
+Only around 10\% of global plastic waste has ever been recycled.
+Of the remaining 90\%, 14\% have been incinerated, producing greenhouse gas emissions and releasing gaseous pollutants in the process.
+The remaining 76\% stay intact, leaching toxic chemicals and microplastics into the environment \parencite{walkerRecyclingAloneCannot2025}.
 
+A multitude of polymer groups are used in industrial settings, which can be differentiated based on their polymer backbone. 
+The largest groups in commodity plastics are polyethylene (PE; 36\%), polypropylene (PP; 21\%) and poly\-vinylchloride (PVC; 12\%), 
+followed by polyethylene terephthalate (PET), poylurethane (PUR) and polystyrene (PS) (less than 10\% each).
+In total, these groups add up to 92\% of all plastics ever produced \parencite{geyerProductionUseFate2017}.
 
+The wide variety and usabilty of plastic products stems from the immense range of chemicals that are added during the manifacturing process for different reasons.
+Without additional chemicals, polymers are not broadly usable or durable \parencite{wagnerStateSciencePlastic2024}. 
+Additives aid in manipulating the plastic products properties, such as plasticizers, which are widely used to make the endproduct more flexible, or colorants, which give the endproduct its color \parencite{hahladakisOverviewChemicalAdditives2018a}.
+Processing aids, such as catalysts and solvents, help during the production and processing of polymers.
+Non-intentionally added substances (NIAS) can be categorized into side products, breakdown products and contaminants.
+The extent to which manufacturers are aware of the presence of these substances in the end product varies.
+It is evident that the knowledge and classification of NIAS is, in general, limited, due to a lack of both information and toxicity testing.
+This is partly due to complex structures such as oligomeres being present \parencite{geuekeFPFDossierNonintentionally2018}.
 
+Plastic chemicals are used give the end product specialist functions, while often being the cause of the end product having toxic properties.
+Humans are at risk of plastic chemical exposure during every step of the products life cycle either directly (e.g., plastic straws, plastic childrens toys) 
+or indirectly (e.g., ingestion of food packaged in plastic, inhalation of plastic chemicals from air).
+Plastic chemicals have been linked to many adverse health effects, such as nonylphenol (a plasticizer) and bisphenol A (used as a starting material for polymer synthesis) being endocrine disruptors.
+Plastic additives bonds to polymers are weak and therefore pose risks of them easily being released into the environment at any stage during the plastic life cycle.
+
+The reusability and recycling capacity of the plastic product is influenced by the chemicals as well, as high quality recycling products can often only be produced from 
+well-separated clean recyclates, that is, recyclates free of most plastic chemicals.
+Additionally, chlorinated plastic chemicals can lead to corrosion on recycling machinery.
+Even though of all these problems, plastic chemicals remain widely unregulated and undocumented and often lack proper hazard information \parencite{wagnerStateSciencePlastic2024}.
+
+PUR is a highly diverse group of synthetic thermoplastic polymers created via polycondensation reactions between isocyanates and compounds containing hydroxyl. 
+The wide range of possible reactants forming polyurethanes leads to their usage in a multitude of industries as sealants, coatings, elastomers, and foams.
+Recycling them is of importance considering the ongoing depletion of fossile fuel reserves \parencite{rossignoloRecyclingPolyurethanesWhere2024}. 
+
+Plastic products are primarily recycled mechanically or chemically by depolymerization. 
+Mechanical recycling focuses on thermoplastics such as polyethylene (PE) and polyethylene terephthalate (PET), which consequently are the most recycled plastics.
+Novel approaches \parencite{walkerRecyclingAloneCannot2025}]
+
+The following report predicts the toxicity of plastic chemicals present in the dataset released by \cite{wagnerStateSciencePlastic2024} by training a machine learning model using XGBoost \parencite{chenXGBoostScalableTree2016}.
+They present 16~325 known plastic chemicals and their properties compiled from multiple open databases.
+Only around ~6\% of them are internationally regulated, and more than 10~000 are missing any hazard information at all.
+This motivates a structure-based toxicity prediction approach.
+A significant challenge in the implementation of this approach is the significant class imbalance of the available hazard information, 
+which is adressed through resampling [and a balance-sensitive loss function (falls focal loss verwendet)].
+
+\newpage
 \section{Dataset and problem setting}
+\label{sec:dataset}
 % Problem setting
-[plastik ist böse, hinführung zu degradation und additives sind böse, polyurethan domain recycling ist schwer (chemisch)]
-Plastic production and consumption has a growing impact on the environment. 
-In the past \parencite{walker_recycling_2025}
 
-The dataset was released by \citet{monclus_mapping_2025} in 2024 and contains 16 325 (oder 16323?? ich hab glaube ich zwei weniger die nicht geparst werden konnte) known plastic chemicals and their physiochemical properties.
-
+hallo
 
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
+The dataset presents 16~325 known plastic chemicals. 
+Only around ~6\% of them are internationally regulated, and more than 10~000 are missing any hazard information at all \parencite{wagnerStateSciencePlastic2024}. 
+Entries in the database have been compiled from seven different primary databases (Aurisano db, CPPdb, ECHA db, FCCdb, FCCmigex, LitChemPlast, PlasticMAP)
+and are identifiable via their CAS registry number.
+In addition to identifiers, the dataset contains ionformation about chemical properties and 
+Zusätzlich sind pro Compound verschiedene Eigenschaften genannt, diese sind aber nicht für alle Compounds vollständig.
 
-\section{XGBoost}
+Die Autoren bestimmen die Toxizität eines Compounds mittels eines Scores, dem sogenannten PBMT score. 
+Dieser baut auf den sog. hazard traits auf und beschreibt wie stark persistent, bioaccumulative, mobile und toxic ein compound ist.
+Dabei sind die Scores in 5 Kategorien eingeteilt. Bild einfügen damit man checkt?
+
+Für mehr Details siehe Anhang von \cite{monclusMappingChemicalComplexity2025}.
+
+Balanciertheit des Datensatzes beschreiben mit Bildern aus visual.ipynb
+
+
+\newpage
+\section{Approach}
+% Pipeline beschreiben
+As described in \href{sec:dataset}{Section 2}, the dataset
+ist sehr imbalanciert und hochgradig komplex.
+Darum wurde eine Pipeline aus mehreren Schritten gebaut um trotzdem einen stabilen Classifier zu bauen.
+All diese Schritte wurden in einem GridSearch verfahren getestet, um das Optimum zu finden.
+
+\subsection{Data preprocessing}
+Es wurden mittels rdkit morgan fingerprints aus den canonical smiles berechnet.
+Zuerst wurde eine PCA durchgeführt, um die optimale Menge an Hauptkomponenten aus den hochdimensionalen FIngerprints zu extrahieren.
+Diese dient 
+
+dabei PCA, ENN und SMOTE preprocessing um Datensatz zu balancieren
+\subsection{Resampling strategies}
+
+Due to the imbalance of the data, multiple measures were taken. 
+
+\subsection{Model}
+xgboost mathematisch erklären (mit Formeln???)
+
+eiegntlich hab ich es ja bloß benutzt
+
+dann PCA, HPO mit sklearn, imblearn smote und HPO xgboost
 % Modellannahme, Parameterschätzung und Inferenz mathematisch sauber erklärt.
 % Eventuelle Vorverarbeitung der Daten und mögliche Optimierungen erklärt.
 % Grenzen des Modells aufgezeigt. Pseudocode für Lernverfahren.
@@ -48,23 +161,37 @@ The dataset was released by \citet{monclus_mapping_2025} in 2024 and contains 16
 
 % Grenzen des Modells
 
-\section{Search Strategy}
+\subsection{Hyperparameter Optimization}
 % Sinnvolle Performance Kriterien. Kreuzvalidierung für beste Hyperparameterwahl.
 % Vergleich mit Baselines, weiterführende Analyse des gelernten Modells.
 % Aus Beschreibung bleiben keine Fragen offen.
 % Ergebnisse können reproduziert werden.
 % Detaillierte Diskussion aller Ergebnisse.
+A gridsearch was done over the parameters
+pcancomponents clfmaxdepth clflearningrate clfnestimators clfsubsample
 
-
+\newpage
 \section{Results}
+hierhin die ROC-AUC curves i guess
+
+die Datensatz PCA ergebnisse auch
+
+dann der vergleich mit dummy classifier
+
+
 \label{sec:results}
 
+\newpage
+\section{Discussion}
 
+\newpage
 \appendix
 \renewcommand{\thefigure}{\Alph{section}\arabic{figure}}
 \setcounter{figure}{0}
 \renewcommand{\thealgorithm}{\Alph{section}\arabic{algorithm}}
 \setcounter{algorithm}{0}
+\section{Implementation}
+pseudocodeee juhu
 \section{Additional Figures}
 
 \clearpage
