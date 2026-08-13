@@ -111,7 +111,7 @@ def load_plastchem(path: Path) -> pd.DataFrame:
     return df_plast_chem, pcc
 
 
-def extract_feature_vecs(data: pd.DataFrame | np.Array, n, vars=None):
+def extract_feature_vecs(data, n, vars=None):
     """
     Extract feature vectors from data using scikits implementation of PCA. 
 
@@ -167,6 +167,7 @@ def calculate_mfps(data: pd.DataFrame, column_name: str):
             fps.append(None)
 
     return fps
+
 
 
 

@@ -8,6 +8,8 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{subcaption}
+\usepackage[font=normalsize,labelfont={bf}]{caption}
+\usepackage[bottom]{footmisc}
 \usepackage[
 backend=biber,
 bibstyle=authoryear,
@@ -21,6 +23,7 @@ maxcitenames=2
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{\baselineskip}
+
 
 
 
@@ -40,20 +43,20 @@ maxcitenames=2
     \end{figure}
 	{\Large \textsc{Project thesis}\par}
 	\vspace{1cm}
-	{\huge\bfseries Toxicity predicition of plastic chemicals\par}
+	{\huge\bfseries Toxicity prediction of plastic chemicals\par}
 	\vspace{1cm}
 	{\Large Amelie Hübner\par}
 	\vfill
 	supervised by\par
 	Prof. Dr. Franziska Lederer \protect\footnote{Helmholtz-Zentrum Dresden-Rossendorf, Helmholtz Institute Freiberg for Resource Technology, Freiberg, Germany} \\
-    Dr. Sebastian Starke  \protect\footnote{Helmholtz-Zentrum Dresden-Rossendorf, Department of Information Services and Computing, Dresden, Germany}
+    Dr. Sebastian Starke \protect\footnote{Helmholtz-Zentrum Dresden-Rossendorf, Department of Information Services and Computing, Dresden, Germany}
     \vfill
 
 % Bottom of the page
 	{\large \today\par}
 \end{titlepage}
 
-
+\setcounter{figure}{0}
 \tableofcontents
 \newpage
 
@@ -71,7 +74,7 @@ followed by polyethylene terephthalate (PET), poylurethane (PUR) and polystyrene
 In total, these groups add up to 92\% of all plastics ever produced \parencite{geyerProductionUseFate2017}.
 
 The wide variety and usabilty of plastic products stems from the immense range of chemicals that are added during the manifacturing process for different reasons.
-Without additional chemicals, polymers are not broadly usable or durable \parencite{wagnerStateSciencePlastic2024}. 
+Without additional chemicals, polymers are not broadly usable or durable \parencite{wagnerStateSciencePlastic2025}. 
 Additives aid in manipulating the plastic products properties, such as plasticizers, which are widely used to make the endproduct more flexible, or colorants, which give the endproduct its color \parencite{hahladakisOverviewChemicalAdditives2018a}.
 Processing aids, such as catalysts and solvents, help during the production and processing of polymers.
 Non-intentionally added substances (NIAS) can be categorized into side products, breakdown products and contaminants.
@@ -88,7 +91,7 @@ Plastic additives bonds to polymers are weak and therefore pose risks of them ea
 The reusability and recycling capacity of the plastic product is influenced by the chemicals as well, as high quality recycling products can often only be produced from 
 well-separated clean recyclates, that is, recyclates free of most plastic chemicals.
 Additionally, chlorinated plastic chemicals can lead to corrosion on recycling machinery.
-Even though of all these problems, plastic chemicals remain widely unregulated and undocumented and often lack proper hazard information \parencite{wagnerStateSciencePlastic2024}.
+Even though of all these problems, plastic chemicals remain widely unregulated and undocumented and often lack proper hazard information \parencite{wagnerStateSciencePlastic2025}.
 
 PUR is a highly diverse group of synthetic thermoplastic polymers created via polycondensation reactions between isocyanates and compounds containing hydroxyl. 
 The wide range of possible reactants forming polyurethanes leads to their usage in a multitude of industries as sealants, coatings, elastomers, and foams.
@@ -98,39 +101,73 @@ Plastic products are primarily recycled mechanically or chemically by depolymeri
 Mechanical recycling focuses on thermoplastics such as polyethylene (PE) and polyethylene terephthalate (PET), which consequently are the most recycled plastics.
 Novel approaches \parencite{walkerRecyclingAloneCannot2025}]
 
-The following report predicts the toxicity of plastic chemicals present in the dataset released by \cite{wagnerStateSciencePlastic2024} by training a machine learning model using XGBoost \parencite{chenXGBoostScalableTree2016}.
+The following report predicts the toxicity of plastic chemicals present in the dataset released by \cite{wagnerStateSciencePlastic2025} by training a machine learning model using XGBoost \parencite{chenXGBoostScalableTree2016}.
 They present 16~325 known plastic chemicals and their properties compiled from multiple open databases.
 Only around ~6\% of them are internationally regulated, and more than 10~000 are missing any hazard information at all.
 This motivates a structure-based toxicity prediction approach.
 A significant challenge in the implementation of this approach is the significant class imbalance of the available hazard information, 
-which is adressed through resampling [and a balance-sensitive loss function (falls focal loss verwendet)].
+which is adressed via a combination of resampling and .
 
 \newpage
-\section{Dataset and problem setting}
+\section{Dataset}
 \label{sec:dataset}
-% Problem setting
 
-hallo
-
+\subsection{PlastChem database}
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
-The dataset presents 16~325 known plastic chemicals. 
-Only around ~6\% of them are internationally regulated, and more than 10~000 are missing any hazard information at all \parencite{wagnerStateSciencePlastic2024}. 
-Entries in the database have been compiled from seven different primary databases (Aurisano db, CPPdb, ECHA db, FCCdb, FCCmigex, LitChemPlast, PlasticMAP)
-and are identifiable via their CAS registry number.
-In addition to identifiers, the dataset contains ionformation about chemical properties and 
-Zusätzlich sind pro Compound verschiedene Eigenschaften genannt, diese sind aber nicht für alle Compounds vollständig.
+The PlastChem database is the largest publicly available plastic chemical database to date.
+It is was built to adress the scarcity and scattering of chemical data on plastic chemicals, a problem faced by policymakers and researchers in the plastic sector,
+and compiled and identified 17~932 entries which are present in plastic products.
+The database was created through a systematic collection and harmonization of information from scientific and regulatory sources.
+In addition to identifiers, it contains information about chemical properties, regulation, hazard information, structural groups, production and functions across multiple plastic subgroups.
+The authors identified chemicals of concern based on their hazard information, which was determined on four criteria: persistence, bioaccumulation, mobility and toxicity.
+These four criteria were transferred to a single hazard score.
+For more information on the hazard scores, see Supplementary information of
+\cite{monclusMappingChemicalComplexity2025} and \href{fig:hazardscore}{Figure B1}.
 
-Die Autoren bestimmen die Toxizität eines Compounds mittels eines Scores, dem sogenannten PBMT score. 
-Dieser baut auf den sog. hazard traits auf und beschreibt wie stark persistent, bioaccumulative, mobile und toxic ein compound ist.
-Dabei sind die Scores in 5 Kategorien eingeteilt. Bild einfügen damit man checkt?
+Across the entire database, around 25\% of all listed chemicals have been assigned a hazard score, marking them as hazardous to human health or the environment.
+The 10 largest polymer groups, that is, the 10 groups with the most chemicals assigned to them, each contain at least 400 chemicals of concern.
+This work uses the PlastChem database (version 1.01, \cite{wagnerStateSciencePlastic2025}) as the source for both molecular structures and hazard labels for training a classification model.
 
-Für mehr Details siehe Anhang von \cite{monclusMappingChemicalComplexity2025}.
+\subsection{Data selection}
+For the purpose of this project, only compounds meeting both the following criteria were used for model training and evaluation:
 
-Balanciertheit des Datensatzes beschreiben mit Bildern aus visual.ipynb
+1. a canonical SMILES\protect\footnote{Simplified Molecular Input Line Entry System; a representation of molecular structures as ASCII-strings} string was present, allowing computation of Morgan molecular fingerprints
+\protect\footnote{}
+as a model input, and \\
+2. the hazard score label was present, allowing its direct usage as a toxicity label.
+
+Entries failing either criterion were excluded, as neither a valid molecular representation nor a usable target label could be constructed for them.
+Compounds for which fingerprint generation failed (e.g. due to invalid SMILES) were removed as well.
+This resulted in 4~748 compounds that were deemed usable for the model training.
+Finally, hazard scores were binarized into hazardous and not hazardous, by merging the intermediate and high-hazard categories into a single class.
+
+\subsection{Class imbalance}
+The resulting dataset is strongly imbalanced toward the hazardous class across all polymer types.
+In total, the hazardous class represents ~97\% of the data.
+\href{fig:polymer}{Figure 1} shows the imbalance per polymer type. 
+Across all ten most abundant polymers, the hazardous class makes up between 95\% and 98\% of compounds,
+with PET and PP being associated with the largest absolute amount of chemicals of concern and PC (polycarbonate) and 
+ABS (acrylonitrile butadiene styrene) with the lowest amount. 
+As this is only a representation of known plastic chemicals, these statements cannot be transferred to real world observations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{../analysis/polymer.png}
+    \caption{}
+    \label{fig:polymer}
+\end{figure}
+
+This pronounced imbalance is the primary reason resampling was incorporated into the training pipeline described in \href{sec:approach}{Section 3},
+and why balanced accuracy rather than raw accuracy was used as the model selection criterion during hyperparameter search.
+
+Another complexity the dataset presents itself with is its high dimensionality.
+This is invariably the case when dealing with chemical data represented as SMILES.
+\href{fig:pca}{Figure 2} visualizes this using a two-component PCA projection of the Morgan fingerprints
 
 
 \newpage
 \section{Approach}
+\label{sec:approach}
 % Pipeline beschreiben
 As described in \href{sec:dataset}{Section 2}, the dataset
 ist sehr imbalanciert und hochgradig komplex.
@@ -138,6 +175,7 @@ Darum wurde eine Pipeline aus mehreren Schritten gebaut um trotzdem einen stabil
 All diese Schritte wurden in einem GridSearch verfahren getestet, um das Optimum zu finden.
 
 \subsection{Data preprocessing}
+As the objective of this report is to predict toxicity, all 
 Es wurden mittels rdkit morgan fingerprints aus den canonical smiles berechnet.
 Zuerst wurde eine PCA durchgeführt, um die optimale Menge an Hauptkomponenten aus den hochdimensionalen FIngerprints zu extrahieren.
 Diese dient 
@@ -183,20 +221,51 @@ dann der vergleich mit dummy classifier
 
 \newpage
 \section{Discussion}
+\label{sec:discussion}
+- schwierige Daten machen schlechte Vorhersagen \\
+- schwierige Daten wegen schwierigen Practices in der industrie \\
+- 
 
+- Outlook: DBScan statt PCA nehmen, scaffold split oder anderen Split versuchen, loss function wie focal loss nehmen,
+anderes Modell nehmen \\
+- eher als grundsätzlicher Versuch, Thema an sich ist von größerem Scope und bedeutet viel mehr Rumprobieren \\
 \newpage
 \appendix
 \renewcommand{\thefigure}{\Alph{section}\arabic{figure}}
 \setcounter{figure}{0}
 \renewcommand{\thealgorithm}{\Alph{section}\arabic{algorithm}}
 \setcounter{algorithm}{0}
-\section{Implementation}
+\renewcommand{\thesection}{S\arabic{section}}  
+\renewcommand{\thetable}{S\arabic{table}}  
+\renewcommand{\thefigure}{S\arabic{figure}} 
+\section{Model implementation}
 pseudocodeee juhu
+
+
+
+
+\newpage
 \section{Additional Figures}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{hazard.png}
+    \caption{"Workflow to assign hazard scores. PBT refers to persistent, bioaccumulative
+            and toxic chemicals; vPvB refers to very persistent, very bioaccumulative chemicals; POP
+            refers to persistent organic pollutants; PMT refers to persistent, mobile and toxic chemicals;
+            vPvM refers to very persistent, very mobile chemicals; CMR refers to chemicals that are
+            carcinogenic, mutagenic and toxic to reproduction; EDC refers to endocrine disrupting
+            chemicals; STOT refers to chemicals with specific target organ toxicity (after repeated
+            exposure), Aq. Tox. refers to chemicals inducing aquatic toxicity." \parencite[Supplements p.~13]{monclusMappingChemicalComplexity2025} }
+    \label{fig:hazardscore}
+\end{figure}
+
 
 \clearpage
 \printbibliography 
 \end{document}
+
+
+
 
 
 
