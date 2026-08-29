@@ -11,3 +11,5 @@ report/main.log
 report/main.pdf
 report/main.synctex.gz
 report/main.run.xml
+**/__pycache__/**
+**/.ipynb_checkpoints/**
