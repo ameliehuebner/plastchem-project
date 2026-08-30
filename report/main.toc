@@ -2,13 +2,17 @@
 \contentsline {section}{\numberline {2}Methods}{4}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Dataset}{4}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Model training}{6}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Computing environment}{9}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Results}{9}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Grid search}{9}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Resampling}{9}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Performance}{10}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Discussion}{14}{section.4}%
-\contentsline {section}{{}References}{15}{section*.12}%
-\contentsline {section}{\numberline {S1}Model implementation}{19}{appendix.A}%
-\contentsline {section}{\numberline {S2}Additional Figures}{20}{appendix.B}%
-\contentsline {section}{{}Declaration of Academic Integrity}{21}{section*.17}%
+\contentsline {subsection}{\numberline {2.3}Computing environment}{7}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Results}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Grid search}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Data processing}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Performance}{9}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Discussion}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Dataset limitations}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Model performance metrics}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Generalization limitations}{13}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Outlook}{13}{subsection.4.4}%
+\contentsline {section}{{}References}{15}{section*.11}%
+\contentsline {section}{\numberline {S1}Code availability}{18}{appendix.A}%
+\contentsline {section}{\numberline {S2}Additional Figure}{18}{appendix.B}%
+\contentsline {section}{{}Declaration of Academic Integrity}{20}{section*.18}%
