@@ -2,7 +2,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb}
 \usepackage{float}
-\usepackage[hidelinks]{hyperref}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{algorithm}
@@ -20,6 +19,14 @@ maxcitenames=2
 \addbibresource{plast-chem.bib}
 
 \usepackage[a4paper, left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    hidelinks   = true,
+    pdfauthor   = {Amelie Hübner},
+    pdftitle    = {Toxicity prediction of plastic chemicals},
+    bookmarksnumbered = true,
+    breaklinks  = true
+}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{\baselineskip}
@@ -62,7 +69,7 @@ maxcitenames=2
 \tableofcontents
 \newpage
 
-\section{Introduction}
+\section{Introduction} \label{sec:intro}
 %[plastik ist böse, hinführung zu degradation und additives sind böse
 % polyurethan domaine recycling ist schwer (chemisch)]
 The impact and scale of plastic production and consumption on the environment is steadily increasing. 
@@ -137,8 +144,7 @@ imbalance of the available hazard information,
 which is adressed via a combination of resampling and a custom loss objective.
 
 \newpage
-\section{Dataset}
-\label{sec:dataset}
+\section{Dataset} \label{sec:dataset}
 
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
 The PlastChem database is the largest publicly available plastic chemical database to date.
@@ -153,7 +159,7 @@ The authors identified chemicals of concern based on their hazard information, w
 determined on four criteria: persistence, bioaccumulation, mobility and toxicity.
 These four criteria were transferred to a single hazard score.
 For more information on the hazard scores, see Supplementary information of
-\cite{monclusMappingChemicalComplexity2025} and \href{fig:hazardscore}{Figure B1}.
+\cite{monclusMappingChemicalComplexity2025} and figure \ref{fig:hazardscore}.
 
 Across the entire database, around 25\% of all listed chemicals have been assigned a hazard score, 
 marking them as hazardous to human health or the environment.
@@ -180,7 +186,7 @@ and high-hazard categories into a single class.
 
 The resulting dataset is strongly imbalanced toward the hazardous class across all polymer types.
 In total, the hazardous class represents ~97\% of the data.
-\href{fig:polymer}{Figure 1} shows the imbalance per polymer type. 
+Figure \ref{fig:polymer} shows the imbalance per polymer type. 
 Across all ten most abundant polymers, the hazardous class makes up between 95\% and 98\% of compounds,
 with PET and PP being associated with the largest absolute amount of chemicals of concern and PC (polycarbonate) and 
 ABS (acrylonitrile butadiene styrene) with the lowest amount. 
@@ -189,56 +195,58 @@ transferred to real world observations.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{../analysis/polymer.png}
-    \caption{}
-    \label{fig:pca}
+    \includegraphics[width=1\textwidth]{polymer}
+    \caption{Amount and ratio of hazardous and non hazardous compounds in the dataset displayed by polymer type 
+    for the ten most abundant polymer types present.}
+    \label{fig:polymer}
 \end{figure}
 
 This pronounced imbalance is the primary reason resampling was incorporated into the 
-training pipeline described in \href{sec:approach}{Section 3},
+training pipeline described in section \ref{sec:approach},
 and why balanced accuracy rather than raw accuracy was used as the model selection 
 criterion during hyperparameter search.
 
 Another complexity the dataset presents with is its high dimensionality.
 This is invariably the case when dealing with chemical data represented as highly dimensional sparse fingerprints.
-\href{fig:pca}{Figure 2} visualizes this using a two-component PCA projection of the Morgan fingerprints, in which
+Figure \ref{fig:pca} visualizes this using a two-component PCA projection of the Morgan fingerprints, in which
 the two components together capture just 8.56\% of total variance. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{../analysis/pca.png}
-    \caption{}
-    \label{fig:polymer}
+    \includegraphics[width=1\textwidth]{pca}
+    \caption{Two-dimensional principal component analysis of dataset represented as molecular fingerprints, 
+    explaining 8.56\% of total variance.}
+    \label{fig:pca}
 \end{figure}
 
 Hazardous compounds (yellow) are distributed broadly across the whole projected space, 
 while non-hazardous compounds (purple) are comparatively rare, with no clear linear separation 
 visible in the first two principal components.
-This lack of separability in low-dimensional projection motivated the use of a nonlinear 
-classifier (XGBoost) rather than a linear model.
+This lack of separability in a low-dimensional projection motivated the use of a nonlinear 
+classifier such as XGBoost rather than a linear model.
 
 
 \newpage
-\section{Methods}
-\label{sec:approach}
+\section{Methods} \label{sec:approach}
 % Pipeline beschreiben
 This projects goal is to build a binary classifier, which, given the molecular structure of a plastic 
-associated chemical (encoded as a fingerprint),
+associated chemical encoded as a fingerprint,
 predicts whether the compound is hazardous or not hazardous.
-As described in \href{sec:dataset}{Section 2}, the dataset is highly imbalanced and not very well separable.
+As described in section \ref{sec:dataset}, the dataset is highly imbalanced and not very well separable.
 In order to build a reliable classifier, the decision was made to binarize the hazard labels, 
 as multi class classifiers are even more susceptible to imbalance.
 
 The dataset (the remaining 4~748 compounds with a valid SMILES-derived fingerprint and a hazard-label, 
-see \href{sec:dataset}{Section 2}) was split into three disjoint sets, with 70\% of the data used as 
+see section \ref{sec:dataset}) was split into three disjoint sets, with 70\% of the data used as 
 the exploration set for a cross-validated hyperparameter search, and
 the remaining 30\% split in half into test and validation set (15\% each).
-All splits were stratified on the traget hazard label in order to preserve class the previously described 
+All splits were stratified on the target hazard label in order to preserve class the previously described 
 class imbalance, and a fixed random seed was used throughout for reproducibility, as implemented in the 
 sklearn python package \parencite{pedregosaScikitlearnMachineLearning2011}.
 
 To prevent data leakage, preprocessing and classificator training were combined into a single pipeline.
-A grid search cross-validation approach was taken to fit the training data on the classifier.
+A grid search cross-validation approach was taken to determine the best parameter values to 
+fit the training data on the classifier.
 First, a Principal Component Analysis (PCA) is applied to transfer the 2048-bit large binary fingerprints 
 into a continous lower-dimensional representation.
 Then, the pipeline applies the Synthetic Minority Over-sampling TEchnique algorithm (SMOTE) combined with
@@ -253,6 +261,7 @@ as ENN and SMOTE are known to perform poorly
 due to the curse of dimensionality \parencite{altmanCursesDimensionality2018} especially considering the dataset size.
 Therefore, PCA was applied first to obtain a lower-dimensional,
 dense representation in which relationships between neighboring molecules are more meaningful.
+The optimal number of components for the PCA was determined during the grid search.
 
 SMOTE \parencite{chawlaSMOTESyntheticMinority2002} was selected instead of simple random oversampling or 
 class weighting because it generates synthetic minority-class
@@ -263,26 +272,75 @@ introduced by SMOTE, it was followed by an ENN \parencite{wilsonAsymptoticProper
 step to remove noisy majority-class samples near the decision boundary. 
 Combining SMOTE and ENN follows the recommendation for a combined resampling by 
 \cite{batistaBalancingStrategiesClass2005}.
+The combined sklearn implementation SMOTEENN \parencite{pedregosaScikitlearnMachineLearning2011} has a parameter 
+to set the preferred ratio of minority class over majority class samples after resampling, which 
+was optimized in the grid search.
 
 XGBoost \parencite{chenXGBoostScalableTree2016} was used as the classifier due to its strong 
-benchmark performance on tabular and molecular fingerprint data 
-and its native handling of nonlinear feature interactions.
+benchmark performance on tabular and molecular fingerprint data (see \cite{dingMolecularFingerprintbasedMachine2021}
+for an example).
+It employs a gradient boosting method, iteratively improving the performance of decision trees to 
+improve the fit to the training data by taking the previous decision tree as a starting point for the next one.
+The final prediction for each sample is determined on an ensemble of all built decision trees.
+Utilizing column sampling and sparsity-aware learning, the XGBoost framework is especially 
+useful for data in which one of the challenges is to prevent overfitting, such as the herein presented extremely
+imbalanced data.
+For the XGBoost classifier, the tree method "hist" was chosen because of its performance advantages. 
+Further, the maximum delta step parameter is set to 3 in order to restrict the weight of each tree, 
+another measure taken to prevent overfitting on the majority class.
 
-[GRIDsearch tabelle]
-% param_grid = {
-%     "pca__n_components": [70, 100, 130],
-%     "smoteenn__sampling_strategy": [0.2, 0.4, 0.6],
-%     "clf__max_depth": [5, 7, 9],
-%     "clf__learning_rate": [0.001, 0.01, 0.1],
-%     "clf__n_estimators": [100, 200, 300],
-%     "clf__obj": [fcbl_g1, fcbl_g2, fcbl_g3]
-% }
+Additionally, a custom focal loss objective implemented by \citeauthor{wangImbalanceXGBoostLeveragingWeighted2020}
+was adapted for the sklearn API and used in the classifier.
+Focal loss was proposed by \citeauthor{linFocalLossDense2017} with the goal to adress binary class imbalance by
+reducing the loss allocated to well-classified samples.
+The focusing parameter was set to 2, as the authors described this value to work best.
+Because of time and implementation constraints, this parameter was not optimized in the grid search.
+
+Finally, the four following parameters were optimized during the grid search:  \\
+- the maximum depth of each tree, restricting the size of each decision tree\\
+- the learning rate of the classifier, restricting the impact of each new tree on the prediction\\
+- the number of estimators, that is, decision trees forming the ensemble, and \\
+- the subsample ratio of columns for each level, a further measure to prevent overfitting by reducing the number of 
+features seen by the classifier during each tree level.
+
+The results for each parameter that was optimized in the aforementioned grid search are displayed in 
+section \ref{sec:results}.
+
+
+
 
 \newpage
-\section{Results}
+\section{Results} \label{sec:results}
+
+After the SMOTEENN step, the imbalance in the data is significantly less severe
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
+    \caption{smote effect}
+    \label{fig:smote}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
+    \caption{pr auc roc}
+    \label{fig:pr_auc_roc}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
+    \caption{cv performance}
+    \label{fig:cv_performance}
+\end{figure}
+
+Bilder erklären
+
 hierhin die ROC-AUC curves i guess
 
 die Datensatz PCA ergebnisse auch
+[PCA explained steps dazu aufschreiben]
 
 dann der vergleich mit dummy classifier
 
@@ -290,15 +348,14 @@ Gridsearch results
 
 [best model results]
 laufzeit gridsearch
-\label{sec:results}
 
 \newpage
-\section{Discussion}
-\label{sec:discussion}
+\section{Discussion} \label{sec:discussion}
 - schwierige Daten machen schlechte Vorhersagen \\
 - schwierige Daten wegen schwierigen Practices in der industrie \\
 - Outlook: DBScan statt PCA nehmen, scaffold split oder anderen Split versuchen
 anderes Modell nehmen \\
+- mehr outlook: class imbalance als start prior nehmen \\
 - eher als grundsätzlicher Versuch, Thema an sich ist von größerem Scope und bedeutet viel mehr Rumprobieren \\
 \newpage
 \appendix
@@ -335,6 +392,7 @@ pseudocodeee juhu
 \clearpage
 \printbibliography 
 \end{document}
+
 
 
 
