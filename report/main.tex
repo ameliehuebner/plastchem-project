@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{listings}
 \usepackage{amsmath, amssymb}
 \usepackage{float}
 \usepackage{booktabs}
@@ -17,6 +18,21 @@ sorting=anyt,
 maxcitenames=2
 ]{biblatex}
 \addbibresource{plast-chem.bib}
+
+\lstdefinestyle{bash}{
+    basicstyle=\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=false,                
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=1,
+    frame=tb
+}
+
+\hyphenation{SMOTEENN}
 
 \usepackage[a4paper, left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}
 \usepackage{hyperref}
@@ -144,7 +160,8 @@ imbalance of the available hazard information,
 which is adressed via a combination of resampling and a custom loss objective.
 
 \newpage
-\section{Dataset} \label{sec:dataset}
+\section{Methods}
+\subsection{Dataset} \label{sec:dataset}
 
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
 The PlastChem database is the largest publicly available plastic chemical database to date.
@@ -219,17 +236,14 @@ the two components together capture just 8.56\% of total variance.
     \label{fig:pca}
 \end{figure}
 
-Hazardous compounds (yellow) are distributed broadly across the whole projected space, 
-while non-hazardous compounds (purple) are comparatively rare, with no clear linear separation 
+Hazardous compounds (blue) are distributed broadly across the whole projected space, 
+while non-hazardous compounds (orange) are comparatively rare, with no clear linear separation 
 visible in the first two principal components.
 This lack of separability in a low-dimensional projection motivated the use of a nonlinear 
 classifier such as XGBoost rather than a linear model.
-
-
-\newpage
-\section{Methods} \label{sec:approach}
+\subsection{Model training} \label{sec:approach}
 % Pipeline beschreiben
-This projects goal is to build a binary classifier, which, given the molecular structure of a plastic 
+The aim of this project is to build a binary classifier, which, given the molecular structure of a plastic 
 associated chemical encoded as a fingerprint,
 predicts whether the compound is hazardous or not hazardous.
 As described in section \ref{sec:dataset}, the dataset is highly imbalanced and not very well separable.
@@ -296,7 +310,8 @@ reducing the loss allocated to well-classified samples.
 The focusing parameter was set to 2, as the authors described this value to work best.
 Because of time and implementation constraints, this parameter was not optimized in the grid search.
 
-Finally, the four following parameters were optimized during the grid search:  \\
+Finally, the four following parameters were optimized during the grid search: 
+
 - the maximum depth of each tree, restricting the size of each decision tree\\
 - the learning rate of the classifier, restricting the impact of each new tree on the prediction\\
 - the number of estimators, that is, decision trees forming the ensemble, and \\
@@ -307,32 +322,104 @@ The results for each parameter that was optimized in the aforementioned grid sea
 section \ref{sec:results}.
 
 
-
-
 \newpage
+\subsection{Computing environment} \label{sec:env}
+
+All experiments were conducted on a compute node of the university cluster `Draco`.
+For the experiments, 32 CPU cores were allocated with 32 GiB of memory.
+No GPU resources were allocated or used. The operating system was AlmaLinux 8.7. 
+All experiments were executed using Python 3.14.6. 
+The primary software libraries used for data processing and machine learning included 
+NumPy 2.5.0, pandas 3.0.3, SciPy 1.18.0, scikit-learn 1.9.0, XGBoost 3.3.0 abd imbalanced-learn 0.14.2.
+Matplotlib 3.11.0 was used for visualization.
+
 \section{Results} \label{sec:results}
+
+\subsection{Grid search} \label{subsec:grid}
+An iterative grid search was performed, progressively narrowing the search range around promising values chosen
+from initial exploration runs (Table \ref{tab:grid}). 
+The final configuration selected "n\_components=130", "sampling\_strategy=0.4", "max\_depth=5", 
+"learning\_rate=0.01", "n\_estimators=200", and "colsample\_bylevel=0.75", achieving a cross-validated 
+balanced accuracy of 0.615 (Section \ref{subsec:perf}). 
+Notably, both max\_depth and sampling\_strategy were selected at the boundary of their respective 
+search ranges.
+The search grid for the sampling\_strategy parameter was not extended further,
+in order to avoid the introduction of additional noise.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{| c | c | c | c |}
+        \hline
+        Pipeline step & Parameter & Explanation & Grid values \\
+        \hline
+        PCA &  "n\_components" & No. of principal components & 100, \underline{130}, 160 \\
+        \hline
+        SMOTEENN & "sampling\_strategy" & desired class ratio & 0.2, 0.3, \underline{0.4} \\
+        \hline
+        XGBoost & "max\_depth" & max. depth of trees & \underline{5}, 7, 9 \\
+        XGBoost & "learning\_rate" & impact of new trees & 0.001, \underline{0.01}, 0.1 \\
+        XGBoost & "n\_estimators" & No. of decision trees & 100, \underline{200}, 300 \\
+        XGBoost & "colsample\_bylevel" & feature reduction & 0.5, \underline{0.75}, 1.0 \\
+        \hline
+    \end{tabular}
+    \caption{Results of iterative grid search, with chosen parameters underlined.}
+    \label{tab:grid}
+\end{table}
+
+% CPU times: user 2d 1h 42min 12s, sys: 4min 6s, total: 2d 1h 46min 19s
+% Wall time: 1h 39min 31s
+
+The grid search ran 
+
+\subsection{Resampling}\label{subsec:resampling}
 
 After the SMOTEENN step, the imbalance in the data is significantly less severe
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
-    \caption{smote effect}
+    \includegraphics[width=0.9\textwidth]{smote_effect}
+    \caption{Impact of resampling strategies on sample amount, displayed as before SMOTEENN and after.}
     \label{fig:smote}
 \end{figure}
 
 
+\subsection{Performance}\label{subsec:perf}
+test set performance tabelle
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
-    \caption{pr auc roc}
-    \label{fig:pr_auc_roc}
+    \includegraphics[width=0.6\textwidth]{pr_curve_min.eps}
+    \caption{precision recall}
+    \label{fig:pr}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{../analysis/cv_performance.pdf}
+    \includegraphics[width=0.6\textwidth]{roc_auc.eps}
+    \caption{AUC ROC}
+    \label{fig:roc}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{cv_performance.eps}
     \caption{cv performance}
     \label{fig:cv_performance}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{cm_test.eps}
+    \caption{cm test}
+    \label{fig:cm_test}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{cm_dummy.eps}
+    \caption{cm dummy}
+    \label{fig:cm_dummy}
 \end{figure}
 
 Bilder erklären
@@ -358,6 +445,22 @@ anderes Modell nehmen \\
 - mehr outlook: class imbalance als start prior nehmen \\
 - eher als grundsätzlicher Versuch, Thema an sich ist von größerem Scope und bedeutet viel mehr Rumprobieren \\
 \newpage
+
+\phantomsection
+\label{sec:Refs}
+\addcontentsline{toc}{section}{\protect{}References}
+\printbibliography
+\newpage
+\listoftables
+
+\newpage
+\listoffigures
+
+\newpage
+
+
+
+
 \appendix
 \renewcommand{\thefigure}{\Alph{section}\arabic{figure}}
 \setcounter{figure}{0}
@@ -388,10 +491,59 @@ pseudocodeee juhu
     \label{fig:hazardscore}
 \end{figure}
 
+\newpage
 
-\clearpage
-\printbibliography 
+\section*{Declaration of Academic Integrity}
+\addcontentsline{toc}{section}{\protect{}Declaration of Academic Integrity}
+
+1. I hereby confirm that this work — or in case of group work, the contribution for which I am
+responsible and which I have clearly identified as such — is my own work and that I have not used
+any sources or resources other than those referenced.
+I take responsibility for the quality of this text and its content and have ensured that all information
+and arguments provided are substantiated with or supported by appropriate academic sources. I
+have clearly identified and fully referenced any material such as text passages, thoughts, concepts
+or graphics that I have directly or indirectly copied from the work of others or my own previous
+work. Except where stated otherwise by reference or acknowledgement, the work presented is my
+own in terms of copyright.
+
+2. I understand that this declaration also applies to generative AI tools which cannot be cited
+(hereinafter referred to as ‘generative AI’).
+I understand that the use of generative AI is not permitted unless the examiner has explicitly
+authorized its use (Declaration of Permitted Resources). Where the use of generative AI was
+permitted, I confirm that I have only used it as a resource and that this work is largely my own
+original work. I take full responsibility for any AI-generated content I included in my work.
+Where the use of generative AI was permitted to compose this work, I have acknowledged its use
+in a separate appendix. This appendix includes information about which AI tool was used or a
+detailed description of how it was used in accordance with the requirements specified in the
+examiner’s Declaration of Permitted Resources.
+I have read and understood the requirements contained therein and any use of generative AI in this
+work has been acknowledged accordingly (e.g. type, purpose and scope as well as specific
+instructions on how to acknowledge its use).
+
+3. I also confirm that this work has not been previously submitted in an identical or similar form to
+any other examination authority in Germany or abroad, and that it has not been previously
+published in German or any other language.
+
+4. I am aware that any failure to observe the aforementioned points may lead to the imposition of
+penalties in accordance with the relevant examination regulations. In particular, this may include
+that my work will be classified as deception and marked as failed. Repeated or severe attempts to
+deceive may also lead to a temporary or permanent exclusion from further assessments in my
+degree programme.
+
+
+\noindent Jena, \today \hfill \par
+\raggedleft
+\parbox[H]{.5\linewidth}{
+	\rule[-3pt]{\linewidth}{.4pt}
+	\par
+	\smallskip  
+	\raggedleft{Amelie Hübner}}
+
+
+ 
 \end{document}
+
+
 
 
 

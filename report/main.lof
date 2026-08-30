@@ -1,0 +1,9 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces Amount and ratio of hazardous and non hazardous compounds in the dataset displayed by polymer type for the ten most abundant polymer types present.}}{5}{figure.caption.3}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Two-dimensional principal component analysis of dataset represented as molecular fingerprints, explaining 8.56\% of total variance.}}{6}{figure.caption.4}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Impact of resampling strategies on sample amount, displayed as before SMOTEENN and after.}}{10}{figure.caption.6}%
+\contentsline {figure}{\numberline {4}{\ignorespaces precision recall}}{10}{figure.caption.7}%
+\contentsline {figure}{\numberline {5}{\ignorespaces AUC ROC}}{11}{figure.caption.8}%
+\contentsline {figure}{\numberline {6}{\ignorespaces cv performance}}{11}{figure.caption.9}%
+\contentsline {figure}{\numberline {7}{\ignorespaces cm test}}{12}{figure.caption.10}%
+\contentsline {figure}{\numberline {8}{\ignorespaces cm dummy}}{12}{figure.caption.11}%
+\contentsline {figure}{\numberline {S1}{\ignorespaces "Workflow to assign hazard scores. PBT refers to persistent, bioaccumulative and toxic chemicals; vPvB refers to very persistent, very bioaccumulative chemicals; POP refers to persistent organic pollutants; PMT refers to persistent, mobile and toxic chemicals; vPvM refers to very persistent, very mobile chemicals; CMR refers to chemicals that are carcinogenic, mutagenic and toxic to reproduction; EDC refers to endocrine disrupting chemicals; STOT refers to chemicals with specific target organ toxicity (after repeated exposure), Aq. Tox. refers to chemicals inducing aquatic toxicity." \blx@tocontentsinit {0}\parencite [Supplements p.~13]{monclusMappingChemicalComplexity2025} }}{20}{figure.caption.16}%

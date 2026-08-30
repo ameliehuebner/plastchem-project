@@ -1,7 +1,14 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {2}Dataset}{4}{section.2}%
-\contentsline {section}{\numberline {3}Methods}{7}{section.3}%
-\contentsline {section}{\numberline {4}Results}{9}{section.4}%
-\contentsline {section}{\numberline {5}Discussion}{12}{section.5}%
-\contentsline {section}{\numberline {S1}Model implementation}{13}{appendix.A}%
-\contentsline {section}{\numberline {S2}Additional Figures}{14}{appendix.B}%
+\contentsline {section}{\numberline {2}Methods}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Dataset}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Model training}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Computing environment}{9}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Results}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Grid search}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Resampling}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Performance}{10}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Discussion}{14}{section.4}%
+\contentsline {section}{{}References}{15}{section*.12}%
+\contentsline {section}{\numberline {S1}Model implementation}{19}{appendix.A}%
+\contentsline {section}{\numberline {S2}Additional Figures}{20}{appendix.B}%
+\contentsline {section}{{}Declaration of Academic Integrity}{21}{section*.17}%
