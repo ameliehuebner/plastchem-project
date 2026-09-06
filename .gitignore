@@ -12,4 +12,4 @@ report/main.synctex.gz
 report/main.run.xml
 **/__pycache__/**
 **/.ipynb_checkpoints/**
-jupyterlab.sh
+jupyterlab_*.sh
