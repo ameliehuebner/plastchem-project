@@ -15,7 +15,8 @@ backend=biber,
 bibstyle=authoryear,
 citestyle=authoryear, 
 sorting=anyt,
-maxcitenames=2
+maxcitenames=2,
+firstinits=true
 ]{biblatex}
 \addbibresource{plast-chem.bib}
 
@@ -65,7 +66,7 @@ maxcitenames=2
     \end{figure}
 	{\Large \textsc{Project thesis}\par}
 	\vspace{1cm}
-	{\huge\bfseries Toxicity prediction of plastic chemicals\par}
+	{\huge\bfseries Toxicity Prediction of Plastic Chemicals\par}
 	\vspace{1cm}
 	{\Large Amelie Hübner\par}
 	\vfill
@@ -168,7 +169,7 @@ which is addressed via a combination of resampling and a custom loss objective.
 The PlastChem database \parencite{wagnerStateSciencePlastic2025} is the largest publicly available plastic chemical database to date.
 It was built to address the scarcity and scattering of chemical data on plastic chemicals, 
 a problem faced by policymakers and researchers in the plastic sector.
-17~932 plastic chemical entries which are present in plastic products were compiled and identified.
+17~932 plastic chemical entries that are present in plastic products were compiled and identified.
 The database was created through a systematic collection and harmonization of information from 
 scientific and regulatory sources.
 In addition to identifiers, it contains information about chemical properties, regulation, 
@@ -177,7 +178,7 @@ The authors identified chemicals of concern based on their hazard information, w
 determined on four criteria: persistence, bioaccumulation, mobility and toxicity.
 These four criteria were transferred to a single hazard score.
 For more information on the hazard scores, see Supplementary information of
-\cite{monclusMappingChemicalComplexity2025} and figure \ref{fig:hazardscore}.
+\cite{monclusMappingChemicalComplexity2025} and Figure \ref{fig:hazardscore}.
 
 Across the entire database, around 25\% of all listed chemicals have been assigned a hazard score.
 The 10 largest polymer groups, that is, the 10 groups with the most chemicals assigned to them, 
@@ -200,6 +201,13 @@ Compounds for which fingerprint generation failed (e.g. due to invalid SMILES) w
 This resulted in 4~748 compounds that were deemed usable for the model training.
 Finally, hazard scores were binarized into hazardous and not hazardous, by merging the intermediate 
 and high-hazard categories into a single class.
+
+Morgan fingerprints of length 2048 were computed for all remaining samples.
+Additionally, the molecular weight, topological polar surface area\protect\footnote{sum of surface contributions of all polar atoms} 
+and complexity\protect\footnote{algorithmic complexity score calculated by PubChem} were appended onto the
+fingerprints as complementary information.
+Per-sample dimension was reduced using a principal component analysis (PCA), a linear dimensionality reduction technique 
+that identifies the n components in the data that are linearly uncorrelated.
 
 The resulting dataset is strongly imbalanced toward the hazardous class across all polymer types.
 In total, the hazardous class represents ~97\% of the data.
@@ -224,10 +232,9 @@ and why balanced accuracy rather than raw accuracy was used as the model selecti
 criterion during hyperparameter search.
 
 Another complexity the dataset presents is its high dimensionality.
-[TODO: WIE GROSS??]
 This is invariably the case when dealing with chemical data represented as high-dimensional sparse fingerprints.
-Figure \ref{fig:pca} visualizes this using a two-component PCA projection of the Morgan fingerprints, in which
-the two components together capture just 8.56\% of total variance. 
+Figure \ref{fig:pca} visualizes the complexity of the data using a two-component PCA projection of the Morgan fingerprints, in which
+the two components capture just 8.56\% of total variance. 
 
 \begin{figure}[H]
     \centering
@@ -250,31 +257,33 @@ associated chemical encoded as a fingerprint,
 predicts whether the compound is hazardous or not hazardous.
 As described in section \ref{sec:dataset}, the dataset is highly imbalanced and not easily separable.
 In order to build a reliable classifier, the decision was made to binarize the hazard labels, 
-as multi class classifiers are even more susceptible to imbalance.
-
-[TODO: wie klassen gemergt erklären]
+as multi-class classifiers are even more susceptible to imbalance.
+The classes were binarized by joining all labels with various degree of hazardousness into one,
+while the non-hazardous class was left as is.
 
 The dataset (the remaining 4~748 compounds with a valid SMILES-derived fingerprint and a hazard-label, 
-see section \ref{sec:dataset}) was split into three disjoint sets, with 70\% of the data used as 
-the exploration set for a 5-fold cross-validated hyperparameter search, and
-the remaining 30\% split in half into test and validation set (15\% each).
-While the validation set was used for design improvements, the results in section~\ref{sec:results} 
-are all reported on the independent test set.
-All splits were stratified on the target hazard label in order to preserve class the previously described 
+see section \ref{sec:dataset}) was split into two disjoint sets, with 70\% of the data used as 
+the exploration set for a 5-fold nested cross-validated hyperparameter search, and
+the remaining 30\% as a test set.
+All results in section~\ref{sec:results} are reported on the independent test set.
+The splits were stratified on the target hazard label in order to preserve the previously described 
 class imbalance, and a fixed random seed was used throughout for reproducibility, as implemented in the 
-scikit-learn python package \parencite{pedregosaScikitlearnMachineLearning2011}.
+scikit-learn package \parencite{pedregosaScikitlearnMachineLearning2011}.
 
 To prevent data leakage, preprocessing and classifier training were combined into a single pipeline.
-A grid search 5-fold cross-validation approach was taken to determine the best parameter values to 
-fit the training data on the classifier.
+A nested cross-validation approach was taken to determine the best parameter values for the classifier and
+the preprocessing steps. 
+It combines an inner 5-fold grid search over the hyperparameter grid described below with an outer 5-fold loop
+providing an unbiased estimate of the generalization performance of the model selection \parencite{cawleyOverfittingModelSelection2010}.
 First, a Principal Component Analysis (PCA) was applied to transfer the 2048-bit large binary fingerprints 
 into a continous lower-dimensional representation.
-Then, the pipeline applies the Synthetic Minority Over-sampling TEchnique algorithm (SMOTE) combined with
-Edited Nearest Neighbors (ENN) undersampling.
+Then, the pipeline applies the Synthetic Minority Over-sampling TEchnique algorithm (SMOTE, \cite{chawlaSMOTESyntheticMinority2002}) combined with
+Edited Nearest Neighbors (ENN, \cite{wilsonAsymptoticPropertiesNearest1972}) undersampling.
 This approach oversamples the minority class by interpolating between existing samples
- in order to balance the class ratio.
-Subsequently, the sample space was cleaned using ENN.
-The final classifier is an XGBoost classifier employing a histogram-based tree method.
+in order to balance the class ratio.
+Subsequently, the sample space was cleaned using ENN, a technique that removes samples if any of its nearest neighbours are 
+not from the same class.
+The final classifier is an XGBoost \parencite{chenXGBoostScalableTree2016} classifier employing a histogram-based tree method.
 
 Morgan fingerprints are high-dimensional, sparse binary vectors, in which distance-based methods such 
 as ENN and SMOTE are known to perform poorly 
@@ -283,12 +292,12 @@ Therefore, PCA was applied first to obtain a lower-dimensional,
 dense representation in which relationships between neighboring molecules are more meaningful.
 The optimal number of components for the PCA was determined during the grid search.
 
-SMOTE \parencite{chawlaSMOTESyntheticMinority2002} was selected instead of simple random oversampling or 
+SMOTE was selected instead of simple random oversampling or 
 class weighting because it generates synthetic minority-class
 samples by interpolation rather than duplication, which reduces the risk of overfitting the model to 
 repeated examples.
 As a way to counteract the synthetic points in ambiguous or overlapping regions of the feature space 
-introduced by SMOTE, it was followed by an ENN \parencite{wilsonAsymptoticPropertiesNearest1972} step 
+introduced by SMOTE, it was followed by an ENN step 
 step to remove noisy majority-class samples near the decision boundary. 
 Combining SMOTE and ENN follows the recommendation for a combined resampling by 
 \cite{batistaBalancingStrategiesClass2005}.
@@ -296,22 +305,20 @@ The combined scikit-learn implementation SMOTEENN \parencite{lemaitreImbalancedl
 to set the preferred ratio of minority class over majority class samples after resampling, which 
 was optimized in the grid search.
 
-XGBoost \parencite{chenXGBoostScalableTree2016} was used as the classifier due to its strong 
+XGBoost was used as the classifier due to its strong 
 benchmark performance on tabular and molecular fingerprint data (see \cite{dingMolecularFingerprintbasedMachine2021}
 for an example).
 It employs a gradient boosting approach in which decision trees are added iteratively to improve
 the ensemble's predictions on the training data.
 The final prediction for each sample is determined based on the combined predictions of all decision trees in the ensemble.
-The XGBoost framework is especially useful for data in which one of the challenges is to prevent overfitting,
-as in the herein presented severely imbalanced data.
-For the XGBoost classifier, the tree method "hist" was chosen because of its performance advantages. 
+The tree method "hist" was chosen due to its computational efficiency. 
 Further, the maximum delta step parameter is set to 3 in order to restrict the weight of each tree, 
 another measure taken to prevent overfitting on the majority class.
 
-Additionally, a custom focal loss objective implemented by \citeauthor{wangImbalanceXGBoostLeveragingWeighted2020}
+Additionally, a custom focal loss objective implemented by \cite{wangImbalanceXGBoostLeveragingWeighted2020}
 was adapted for the scikit-learn API and used in the classifier.
-Focal loss was proposed by \citeauthor{linFocalLossDense2017} with the goal to address binary class imbalance by
-reducing the loss allocated to well-classified samples.
+Focal loss was proposed with the goal to address binary class imbalance by
+reducing the loss allocated to well-classified samples \parencite{linFocalLossDense2017}.
 The focusing parameter was set to 2, as the authors described this value to work best.
 Because of time and implementation constraints, this parameter was not optimized in the grid search.
 
@@ -331,22 +338,27 @@ The model training was conducted on a compute node of the Friedrich-Schiller-Uni
 high performance computing cluster `Draco`.
 The node is equipped with two Intel Xeon Gold 6326 CPUs with 2.90 GHz.
 The system has a total of 32 physical CPU cores or 64 logical CPUs.
-For the training, 32 CPU cores were allocated with 32 GiB of memory.
+For the training, 64 CPU cores were allocated with 32 GiB of memory.
 All model training was executed using Python 3.14.6. 
 The primary software libraries used for data processing and machine learning included 
-NumPy 2.5.0, pandas 3.0.3, SciPy 1.18.0, scikit-learn 1.9.0, XGBoost 3.3.0 and imbalanced-learn 0.14.2.
-
+NumPy 2.5.0, pandas 3.0.3, scikit-learn 1.9.0, XGBoost 3.3.0 and imbalanced-learn 0.14.2.
 
 \newpage
 \section{Results} \label{sec:results}
 
 \subsection{Grid search} \label{subsec:grid}
-An iterative grid search was performed, progressively narrowing the search range around promising values chosen
+An nested iterative grid search was performed, progressively narrowing the search range around promising values chosen
 from initial exploration runs (Table \ref{tab:grid}). 
-The final configuration selected "n\_components=130", "sampling\_strategy=0.4", "max\_depth=5", 
-"learning\_rate=0.01", "n\_estimators=200", and "colsample\_bylevel=0.75", achieving a cross-validated 
-balanced accuracy of 0.615 (see section \ref{subsec:perf} and figure \ref{fig:cv_performance}) over 5 folds. 
-Notably, both max\_depth and sampling\_strategy were selected at the boundary of their respective 
+The final configuration selected the following values: \\
+- n\_components=160, \\
+- sampling\_strategy=0.3, \\
+- max\_depth=7, \\
+- learning\_rate=0.01, \\
+- n\_estimators=300, and \\
+- colsample\_bylevel=1.0, \\
+achieving a cross-validated 
+balanced accuracy of 0.616 (see section \ref{subsec:perf} and Figure \ref{fig:cv_performance}) over 5 folds. 
+Notably, n\_compounds, sampling\_strategy, max\_depth and n\_estimators were selected at the boundary of their respective 
 search ranges.
 The search grid for the sampling\_strategy parameter was not extended further,
 in order to avoid the introduction of additional noise.
@@ -358,35 +370,32 @@ in order to avoid the introduction of additional noise.
         Pipeline step & Parameter & Explanation & Grid values \\
         \hline
         \hline
-        PCA &  "n\_components" & No. of principal components & 100, \underline{130}, 160 \\
+        PCA &  n\_components & No. of principal components & \underline{160}, 190, 220 \\
         \hline
-        SMOTEENN & "sampling\_strategy" & desired class ratio & 0.2, 0.3, \underline{0.4} \\
+        SMOTEENN & sampling\_strategy & desired class ratio & 0.1, 0.2, \underline{0.3} \\
         \hline
-        XGBoost & "max\_depth" & max. depth of trees & \underline{5}, 7, 9 \\
-        XGBoost & "learning\_rate" & impact of new trees & 0.001, \underline{0.01}, 0.1 \\
-        XGBoost & "n\_estimators" & No. of decision trees & 100, \underline{200}, 300 \\
-        XGBoost & "colsample\_bylevel" & feature reduction & 0.5, \underline{0.75}, 1.0 \\
+        XGBoost & max\_depth & max. depth of trees & 3, 5, \underline{7} \\
+        XGBoost & learning\_rate & impact of new trees & 0.001, \underline{0.01}, 0.1 \\
+        XGBoost & n\_estimators & No. of decision trees & 100, 200, \underline{300} \\
+        XGBoost & colsample\_bylevel & feature reduction & 0.5, 0.75, \underline{1.0} \\
         \hline
     \end{tabular}
     \caption{Results of iterative grid search, with chosen parameters underlined.}
     \label{tab:grid}
 \end{table}
-% CPU times: user 2d 1h 42min 12s, sys: 4min 6s, total: 2d 1h 46min 19s
-% Wall time: 1h 39min 31s
-
-The grid search ran for a total CPU time of around 2 days, with a wall time of around 2 hours.
 
 \subsection{Data processing}
-As described in table \ref{tab:grid}, the grid search for the optimal number of principal 
-components resulted in 130. This number of components then explained a total variance of 51.41\%.
+As described in Table \ref{tab:grid}, the grid search for the optimal number of principal 
+components resulted in 160. This number of components then explained a total variance of 59.21\%.
 
 Figure \ref{fig:smote} illustrates the effect of the applied resampling strategy on the 
 previously described class imbalance. Before resampling, the training set consisted of 3~323 
 total samples, with 109 labelled as non-hazardous, while the remaining 3~214 were assigned to the hazardous group.
-After resampling, the training set consisted of a total of 3~865 samples, 1~252 of which are labelled as non-hazardous,
-and 2~613 as hazardous. 
+After resampling, the training set consisted of a total of 3~555 samples, 922 of which are labelled as non-hazardous,
+and 2~633 as hazardous. 
 The imbalance between the classes is considerably reduced by the described approach.
 The resulting resampled dataset was subsequently used for the model training.
+The effect of the resampling on the model performance can be observed in Figure~\ref{fig:cv_performance}.
 
 \begin{figure}[H]
     \centering
@@ -397,37 +406,46 @@ The resulting resampled dataset was subsequently used for the model training.
 
 \subsection{Performance}\label{subsec:perf}
 
-Figure \ref{fig:cv_performance} displays the balanced accuracy across the five cross-validation 
-folds of the resulting optimized model. Notably, the performance varied between folds, ranging from 
-around 0.517 to around 0.708. The mean balanced accuracy as indicated by the black line reached 0.615.
-On the independent test set, a slightly higher balanced accuracy of 0.639 was achieved.
+Figure \ref{fig:cv_performance} compares nested cross-validation performance between the pipeline
+with and without resampling (SMOTEENN).
+In both cases, the pipelines were trained on the full grid.
+Without resampling, balanced accuracy remains close to the 0.5 chance level across all five outer folds,
+suggesting this classifier mainly predicting the majority class.
+This is further supported by Figure~\ref{fig:cm_nr_test}.
+While resampling increases the overall accuracy, the performance across folds is notably more variable than 
+in the classifier trained without resampling.
+This indicates resampling increased the classifiers ability to discriminate between classes.
+Notably, the performance varied between folds, ranging from 
+around 0.454 to around 0.666. The mean balanced accuracy as indicated by the black line reached 0.615.
+On the independent test set, a balanced accuracy of 0.616 was achieved.
 Overall, the results show substantial variation between the individual cross-validation folds,
 while the test set achieved a similar balanced accuracy score to the mean cross-validated score.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{cv_performance.eps}
-    \caption{Balanced accuracy across the five cross-validation folds. 
+    \includegraphics[width=\textwidth]{cv_performance.eps}
+    \caption{Nested cross-validation performance (balanced accuracy across five outer folds)
+    of the pipeline trained with and without SMOTEENN resampling. 
     Dashed black line indicates mean balanced accuracy across all folds. 
     Dashed green line indicates balanced accuracy of test set.}
     \label{fig:cv_performance}
 \end{figure}
 
-The model reached a balanced accuracy score of 0.639 and a ROC-AUC score 
-of 0.763 on the test set. 
-As seen in table \ref{tab:classification_report}, the model achieved vastly different
+The model reached a balanced accuracy score of 0.616 and a ROC-AUC score 
+of 0.723 on the test set. 
+As seen in Table \ref{tab:classification_report}, the model achieved vastly different
 performances on the two classes. For the majority class, it performs well, achieving
-a precision of 0.98 with a recall of 0.9 and a F1 of 0.94.
-On the minority class, it severely underperforms, achieving a precision of 0.12,
-a recall of 0.38 and a F1 score of 0.18.
-The support for the minority class is 24, indicating that every classified compound has an effect
-of around 4\% on the reported recall and around 1\% on the precision.
+a precision of 0.97 with a recall of 0.96 and a F1 of 0.96.
+On the minority class, it severely underperforms, achieving a precision of 0.17,
+a recall of 0.28 and a F1 score of 0.21.
+The support for the minority class is 47, indicating that every classified compound has an effect
+of around 2\% on the reported recall.
 The model appears to be strongly optimized towards the majority class.
 While the results presented below indicate its reliable detection of hazardous compounds,
 the performance for the non-hazardous class is notably low and appears to be a significant
 limitation of the model, further suggesting that minority-class predictions should be interpreted
 with caution.
-These measures are additionally supported by figure \ref{fig:cm_test}.
+These measures are additionally supported by Figure \ref{fig:cm_test}.
 
 \begin{table}[ht]
 \centering
@@ -435,8 +453,8 @@ These measures are additionally supported by figure \ref{fig:cm_test}.
 \hline
 Class & Precision & Recall & F1-Score & Support \\
 \hline
-non-hazardous & 0.12 & 0.38 & 0.18 & 24 \\
-hazardous & 0.98 & 0.90 & 0.94 & 689 \\
+non-hazardous & 0.17 & 0.28 & 0.21 & 47 \\
+hazardous & 0.97 & 0.96 & 0.96 & 1378 \\
 \hline
 \end{tabular}
 \caption{Classification performance on the test set.}
@@ -445,7 +463,7 @@ hazardous & 0.98 & 0.90 & 0.94 & 689 \\
 
 Figure \ref{fig:pr} shows precision-recall curves for both classes on the independent 
 test set using the final model. 
-The hazardous class achieves an average precision (AP) of 0.99, while the minority class
+The hazardous class achieves an average precision (AP) of 0.98, while the minority class
 reaches an AP of 0.02, below its class occurrence of approximately 0.034.
 Section \ref{sec:discussion} discusses the difference between the two curves and how it 
 impacts the model reliability.
@@ -454,15 +472,15 @@ impacts the model reliability.
     \centering
     \includegraphics[width=0.6\textwidth]{pr_curve_min.eps}
     \caption{Precision-recall curves for both classes on the independent test set
-    (n=713, of which 24 labelled as non-hazardous).}
+    (n=1425, of which 47 are labelled as non-hazardous).}
     \label{fig:pr}
 \end{figure}
 
 A comparison of the final model against a most-frequent dummy classifier (always 
-predicts the majority class) can be seen in figure \ref{fig:roc}.
+predicts the majority class) can be seen in Figure \ref{fig:roc}.
 Notably, the model outperforms the dummy classifier in this measure, indicating
 predictive performance above chance.
-The discrepancy between the metrics displayed in \ref{fig:pr} and figure \ref{fig:roc}
+The discrepancy between the metrics displayed in Figure \ref{fig:pr} and Figure \ref{fig:roc}
 is further examined in section \ref{sec:discussion}.
 
 \begin{figure}[htb!]
@@ -473,7 +491,7 @@ is further examined in section \ref{sec:discussion}.
     \label{fig:roc}
 \end{figure}
 
-See figure \ref{fig:cm_dummy} and figure \ref{fig:cm_test} for confusion matrices of a dummy
+See Figure \ref{fig:cm_dummy} and Figure \ref{fig:cm_test} for confusion matrices of a dummy
 classifier and the trained model's performance on the test set.
 
 \newpage
@@ -481,12 +499,12 @@ classifier and the trained model's performance on the test set.
 
 \subsection{Dataset limitations}
 The main limitation of this project thesis is the limited data availability.
-Imbalancedness of the previously described degree introduces overfitting to the majority class,
+The previously described imbalance of the class distribution leads to overfitting to the majority class,
 which the results in section \ref{subsec:perf} illustrate.
 The model is unable to learn the structure of non-hazardous compounds given their limited availability
 in the training data.
 Resampling strategies such as SMOTEENN improve the models performance but have to be viewed critically,
-as it cannot be verified whether synthetic interpolations compound to naturally occurring (unknown) compounds.
+as it cannot be verified whether synthetic interpolations result in naturally occurring (unknown) compounds.
 Representing the compounds using morgan fingerprints is limited to the fingerprint size.
 Different fingerprinting techniques have different advantages and may be more useful for harnessing the toxicity signal.
 
@@ -515,16 +533,17 @@ simultaneously only 12\% of the compounds it predicts as non-hazardous are corre
 As the minority class consists of only 24 samples, every sample shifts the recall by around 4\%. % 1/24 → 4,2% 
 The performance metrics for the minority class should therefore be interpreted as noisy estimates 
 rather than robust measures. This is also underlined by the cross validation performance across the five folds
-displayed in figure \ref{fig:cv_performance}.
+displayed in Figure \ref{fig:cv_performance}.
 
-Additionally, figure \ref{fig:pr} and figure \ref{fig:roc} differ in their conveyed message due to the imbalance.
+Additionally, Figure \ref{fig:pr} and Figure \ref{fig:roc} differ in their conveyed message due to the imbalance.
 The precision is reported at a threshold of 0.5 while the average precision (AP) reported in \ref{fig:pr}
 is averaged over the precision at all classification thresholds, weighted by the recall gained at each.
-As the precision-recall curve for the non-hazardous class lies close to its class occurrence in all areas except 
-the baseline near the default threshold, the resulting AP (0.02) is lower than the precision 0.12 reported at threshold 0.5.
-The threshold 0.5 shows one rather favorable point compared to the otherwise weak curve.
+For the non-hazardous class, the precision-recall curve stays close to the class occurence over most of the range.
+As a result, the average precision (AP) is only 0.02, 
+which is considerably lower than the reported precision of 0.12 obtained at a default threshold of 0.5.
+The threshold at 0.5 shows one rather favorable point compared to the otherwise weak curve.
 For the minority class, the model shows weak precision across thresholds.
-While the performance seems overtly optimistic in the ROC-AUC curve, it falls short in 
+While the performance seems overly optimistic in the ROC-AUC curve, it falls short in 
 the precision recall metric for the minority class. 
 Partially, the reason for this divergence lies in the fact that the model was trained on 
 SMOTEENN-rebalanced data but evaluated at a threshold not tuned for the imbalanced test set distribution.
@@ -538,14 +557,16 @@ to already existing compounds, the chemical space of known compounds can be sepa
 into clusters. This introduces bias into models trained using random splitting, where those
 clusters will be evenly distributed, and allows the models to memorize compounds and
 subsequently predict their toxicity based on the neighbouring compounds \parencite{rileyThreePitfallsAvoid2019b},
-resulting in overtly optimistic predictive performance \parencite{guoScaffoldSplitsOverestimate2024}.
+resulting in overly optimistic predictive performance \parencite{guoScaffoldSplitsOverestimate2024}.
 The chemical space of known molecules is complex, indicating that the chemical space of unknown compounds
 is even more complex.
 
 The finding that a comparatively basic pipeline achieves discriminative performance above chance demonstrates
-that structure based approaches have potential to reliably harness toxicity signals.
-Toxicity predicition from chemical structures is an active, substantially larger research area where
-substantial theoretical research is still conducted.
+that structure-based approaches have potential to reliably harness toxicity signals.
+Toxicity prediction from chemical structures is an active research area where
+substantial theoretical research is still conducted 
+(see \cite{sealMachineLearningToxicity2025}, \cite{monemDrugToxicityPrediction2025a},
+\cite{huangSubstructureguidedDeepGraph2026}).
 However, building a de novo architecture better at detecting the chemical signals 
 and training a model with increased complexity is beyond the scope of this work.
 
@@ -566,8 +587,8 @@ see \cite{huberCountYourBits2026a} for a comprehensive review on possible repres
 Finally, alternative model architectures, such as graph neural networks operating directly on the 
 molecular structure should be considered (see \cite{atzGeometricDeepLearning2021} for an extensive review).
 
-This work presents a primary investigation into applicability of the PlastChem database for structure-based hazard prediction.
-It underlines the inherent complexity of chemical machine learning and illustrates that toxicity predicition from molecular structures is 
+This work presents a primary investigation into the applicability of the PlastChem database for structure-based hazard prediction.
+It underlines the inherent complexity of chemical machine learning and illustrates that toxicity prediction from molecular structures is 
 a multidimensional problem, restrained by data availability and representation choices as well as model architecture.
 The scope of this work is too limited to sufficiently solve this problem, but rather serves 
 as a stepping stone for further, more extensive work.
@@ -600,7 +621,7 @@ model presented in this work could serve as a primitive filter for triaging nove
 \renewcommand{\thefigure}{S\arabic{figure}} 
 \section{Code availability}
 All code used for data processing, training, model implementation and visualization
-can be found under \href{https://github.com/ameliehuebner/plastchem-project}{the project thesis github}.
+can be found under \href{https://github.com/ameliehuebner/plastchem-project}{the project thesis Github}.
 
 
 \section{Additional Figure}
@@ -621,14 +642,21 @@ can be found under \href{https://github.com/ameliehuebner/plastchem-project}{the
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{cm_test.eps}
-    \caption{Confusion matrix for the trained model on the independent test set (n=713).}
+    \caption{Confusion matrix for the trained model on the independent test set (n=1425).}
     \label{fig:cm_test}
 \end{figure}
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=0.6\textwidth]{cm_nr_test.eps}
+    \caption{Confusion matrix for the classifier trained without resampling on the independent test set (n=1425).}
+    \label{fig:cm_nr_test}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.6\textwidth]{cm_dummy.eps}
-    \caption{Confusion matrix for the dummy classifier on the independent test set (n=713).}
+    \caption{Confusion matrix for the dummy classifier on the independent test set (n=1425).}
     \label{fig:cm_dummy}
 \end{figure}
 

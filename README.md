@@ -8,12 +8,16 @@ Full methodology, results, and discussion are in [`report/main.pdf`](report/main
 
 ```
 analysis/
-├── utils.py             # Shared helper functions (incl. focal loss)
-├── data/                # PlastChem database (not included)
-├── binary.ipynb         # pipeline and test figures
-├── predict_visual.ipynb # result figures (separate fron gridsearch)
-└── visual.ipynb         # Exploratory analysis and figures 
-report/                  # figures and pdf of final report
+├── data/                    
+│   ├── best_model.joblib     # Retrained model
+│   ├── plastchem_db_v1.1.tsv # PlastChem database (not included)
+│   └── ...
+├── binary.ipynb              # Pipeline for model training
+├── environment.yml           # CONDA environment file
+├── utils.py                  # Shared helper functions (incl. focal loss)
+├── visual_dataset.ipynb      # Exploratory analysis and figures
+└── visual_model.ipynb        # Result figures
+report/                       # Figures and PDF of final report
 ```
 
 ## Data
@@ -26,20 +30,22 @@ Not included in this repository, needs to be downloaded from the [PlastChem Zeno
 Key dependencies:
 ```
 python==3.14.6
-numpy==2.5.0
 pandas==3.0.3
-scipy==1.18.0
 scikit-learn==1.9.0
 xgboost==3.3.0
 imbalanced-learn==0.14.2
-rdkit
+rdkit=2026.03.5
 ```
-Note: training the grid takes around 2 hours on 32 CPU cores
+Build from environment.yml:
+```
+conda env create -f environment.yml
+```
 
 ## Reproducing results
 
 1. Place the PlastChem TSV under `data/` as described.
-2. Run `binary.ipynb` for data preprocessing, the grid search, and final test-set evaluation.
-3. Run `visual.ipynb` for exploratory figures used in the report.
+2. Setup the environment using the `environment.yml`.
+3. Run `binary.ipynb` for data preprocessing, the grid search, and final test-set evaluation.
+4. Run `visual.ipynb` for exploratory figures used in the report.
 
 The final grid search, including the retrained model, can also be loaded directly from `best_model.joblib` / `grid_search.joblib`.
