@@ -88,7 +88,7 @@ maxcitenames=2
 %[plastik ist böse, hinführung zu degradation und additives sind böse
 % polyurethan domaine recycling ist schwer (chemisch)]
 The impact and scale of plastic production and consumption on the environment is steadily increasing. 
-In 2020, the world-wide cumulative primary plastic production surpassed 10~000 million tonnes. 
+In 2020, the world-wide cumulative primary plastic production surpassed 10 billion tonnes. 
 Only around 10\% of global plastic waste has ever been recycled.
 Of the remaining 90\%, 14\% have been incinerated, producing greenhouse gas emissions and 
 releasing gaseous pollutants in the process.
@@ -105,11 +105,13 @@ In total, these groups add up to 92\% of all plastics ever produced \parencite{g
 The wide variety and usability of plastic products stems from the immense range of chemicals that are added 
 during the manufacturing process for different reasons.
 Without additional chemicals, polymers are not broadly usable or durable \parencite{wagnerStateSciencePlastic2025}. 
-Additives aid in manipulating the plastic products properties, such as plasticizers, which are widely used to 
+Additives aid in manipulating the plastic products properties.
+Plasticizers, for example, are widely used to 
 make the endproduct more flexible, or colorants, which give the endproduct its color 
 \parencite{hahladakisOverviewChemicalAdditives2018a}.
 Processing aids, such as catalysts and solvents, help during the production and processing of polymers.
-Non-intentionally added substances (NIAS) can be categorized into side products, breakdown products and contaminants.
+Plastic chemicals can also be unintentionally added.
+Such non-intentionally added substances (NIAS) can be categorized into side products, breakdown products and contaminants.
 The extent to which manufacturers are aware of the presence of these substances in the end product varies.
 It is evident that the knowledge and classification of NIAS is, in general, limited, 
 due to a lack of both information and toxicity testing.
@@ -122,7 +124,7 @@ Humans are at risk of plastic chemical exposure during every step of the product
 directly (e.g., plastic straws, plastic childrens toys) 
 or indirectly (e.g., ingestion of food packaged in plastic, inhalation of plastic chemicals from air).
 Plastic chemicals have been linked to many adverse health effects, such as nonylphenol (a plasticizer) 
-and bisphenol A (used as a starting material for polymer synthesis) being endocrine disruptors.
+and bisphenol A (used as a starting material for polymer synthesis) being endocrine disruptors \parencite{perez-albaladejoPlasticsPlasticAdditives2020}.
 Plastic additives bonds to polymers are weak and therefore pose risks of them easily being released 
 into the environment at any stage during the plastic life cycle.
 
@@ -130,7 +132,7 @@ The reusability and recycling capacity of the plastic product is influenced by t
 as high quality recycling products can often only be produced from 
 well-separated clean recyclates, that is, recyclates free of most plastic chemicals.
 Additionally, chlorinated plastic chemicals can lead to corrosion on recycling machinery.
-Even though of all these problems, plastic chemicals remain widely unregulated and undocumented and 
+Despite all of these problems, plastic chemicals remain widely unregulated and undocumented and 
 often lack proper hazard information \parencite{wagnerStateSciencePlastic2025}.
 
 PUR is a highly diverse group of synthetic thermoplastic polymers created via polycondensation 
@@ -163,10 +165,10 @@ which is addressed via a combination of resampling and a custom loss objective.
 \subsection{Dataset} \label{sec:dataset}
 
 % Datensatz wird gut beschrieben, Relevanz des Themas wird deutlich, mathematisch sauber
-The PlastChem database is the largest publicly available plastic chemical database to date.
+The PlastChem database \parencite{wagnerStateSciencePlastic2025} is the largest publicly available plastic chemical database to date.
 It was built to address the scarcity and scattering of chemical data on plastic chemicals, 
-a problem faced by policymakers and researchers in the plastic sector,
-and compiled and identified 17~932 entries which are present in plastic products.
+a problem faced by policymakers and researchers in the plastic sector.
+17~932 plastic chemical entries which are present in plastic products were compiled and identified.
 The database was created through a systematic collection and harmonization of information from 
 scientific and regulatory sources.
 In addition to identifiers, it contains information about chemical properties, regulation, 
@@ -183,12 +185,12 @@ each contain at least 400 chemicals of concern.
 This work uses the PlastChem database (version 1.1, \cite{wagnerStateSciencePlastic2025}) as the 
 source for both molecular structures and hazard labels for training a classification model.
 
-For the purpose of this project, only compounds meeting both the following criteria were used for 
+For the purpose of this project, only compounds meeting both of the following criteria were used for 
 model training and evaluation:
 
 1. a canonical SMILES\protect\footnote{Simplified Molecular Input Line Entry System; a 
 representation of molecular structures as ASCII-strings} string was present, allowing computation 
-of Morgan molecular fingerprints\protect\footnote{binary encoding of molecular structures}
+of Morgan molecular fingerprints\protect\footnote{binary encoding of molecular structures} \parencite{rogersExtendedConnectivityFingerprints2010}
 as a model input, and \\
 2. the hazard score label was present, allowing its direct usage as a toxicity label.
 
@@ -205,8 +207,8 @@ Figure \ref{fig:polymer} shows the imbalance per polymer type.
 Across all ten most abundant polymers, the hazardous class makes up between 95\% and 98\% of compounds,
 with PET and PP being associated with the largest absolute number of chemicals of concern and PC (polycarbonate) and 
 ABS (acrylonitrile butadiene styrene) with the lowest amount. 
-As this is only a representation of known plastic chemicals, these statements cannot be 
-transferred to real world observations.
+As this data is subject to sampling bias and only represents the known plastic chemicals, 
+one should not think of polymer classes with more toxic chemicals associated to them as more toxic than others.
 
 \begin{figure}[ht]
     \centering
@@ -222,6 +224,7 @@ and why balanced accuracy rather than raw accuracy was used as the model selecti
 criterion during hyperparameter search.
 
 Another complexity the dataset presents is its high dimensionality.
+[TODO: WIE GROSS??]
 This is invariably the case when dealing with chemical data represented as high-dimensional sparse fingerprints.
 Figure \ref{fig:pca} visualizes this using a two-component PCA projection of the Morgan fingerprints, in which
 the two components together capture just 8.56\% of total variance. 
@@ -234,19 +237,22 @@ the two components together capture just 8.56\% of total variance.
     \label{fig:pca}
 \end{figure}
 
-Hazardous compounds (blue) are distributed broadly across the whole projected space, 
-while non-hazardous compounds (orange) are comparatively rare, with no clear linear separation 
+Hazardous compounds (orange) are distributed broadly across the whole projected space, 
+while non-hazardous compounds (blue) are comparatively rare, with no clear linear separation 
 visible in the first two principal components.
-XGBoost's ability to model nonlinear relationships is well suited to this 
-this lack of linear separability in a low-dimensional projection.
+Due to this lack of linear separability in a low-dimensional projection, we decided to use the 
+XGBoost classification algorithm as it was shown in the literature to handle high-dimensional data well.
+
 \subsection{Model training} \label{sec:approach}
 % Pipeline beschreiben
 The aim of this project is to build a binary classifier, which, given the molecular structure of a plastic 
 associated chemical encoded as a fingerprint,
 predicts whether the compound is hazardous or not hazardous.
-As described in section \ref{sec:dataset}, the dataset is highly imbalanced and not very well separable.
+As described in section \ref{sec:dataset}, the dataset is highly imbalanced and not easily separable.
 In order to build a reliable classifier, the decision was made to binarize the hazard labels, 
 as multi class classifiers are even more susceptible to imbalance.
+
+[TODO: wie klassen gemergt erklären]
 
 The dataset (the remaining 4~748 compounds with a valid SMILES-derived fingerprint and a hazard-label, 
 see section \ref{sec:dataset}) was split into three disjoint sets, with 70\% of the data used as 
