@@ -1,6 +1,6 @@
 # Toxicity Prediction of Plastic Chemicals
 
-Project thesis predicting the hazard information of plastic-associated chemicals from molecular structure, using the [PlastChem database](https://doi.org/10.5281/zenodo.10701706) and an XGBoost classifier.
+Project thesis predicting the hazard information of plastic-associated chemicals from molecular structure, using the [PlastChem database](https://doi.org/10.5281/zenodo.10701706) and a XGBoost classifier.
 
 Full methodology, results, and discussion are in [`report/main.pdf`](report/main.pdf).
 
