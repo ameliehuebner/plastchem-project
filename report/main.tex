@@ -89,7 +89,7 @@ firstinits=true
 %[plastik ist böse, hinführung zu degradation und additives sind böse
 % polyurethan domaine recycling ist schwer (chemisch)]
 The impact and scale of plastic production and consumption on the environment is steadily increasing. 
-In 2020, the world-wide cumulative primary plastic production surpassed 10 billion tonnes. 
+In 2020, the world-wide cumulative primary plastic production surpassed ten billion tonnes. 
 Only around 10\% of global plastic waste has ever been recycled.
 Of the remaining 90\%, 14\% have been incinerated, producing greenhouse gas emissions and 
 releasing gaseous pollutants in the process.
@@ -157,9 +157,9 @@ They present 16~325 known plastic chemicals and their properties compiled from m
 Only around ~6\% of them are internationally regulated, and more than 10~000 are missing any 
 hazard information at all.
 This motivates a structure-based toxicity prediction approach.
-A significant challenge in the implementation of this approach is the significant class 
-imbalance of the available hazard information, 
-which is addressed via a combination of resampling and a custom loss objective.
+A significant implementation challenge is posed by the significant class imbalance
+of the available hazard information, 
+which is addressed via a combination of resampling techniques and a custom loss objective.
 
 \newpage
 \section{Methods}
@@ -181,7 +181,7 @@ For more information on the hazard scores, see Supplementary information of
 \cite{monclusMappingChemicalComplexity2025} and Figure \ref{fig:hazardscore}.
 
 Across the entire database, around 25\% of all listed chemicals have been assigned a hazard score.
-The 10 largest polymer groups, that is, the 10 groups with the most chemicals assigned to them, 
+The ten largest polymer groups, that is, the ten groups with the most chemicals assigned to them, 
 each contain at least 400 chemicals of concern.
 This work uses the PlastChem database (version 1.1, \cite{wagnerStateSciencePlastic2025}) as the 
 source for both molecular structures and hazard labels for training a classification model.
@@ -206,7 +206,8 @@ Morgan fingerprints of length 2048 were computed for all remaining samples.
 Additionally, the molecular weight, topological polar surface area\protect\footnote{sum of surface contributions of all polar atoms} 
 and complexity\protect\footnote{algorithmic complexity score calculated by PubChem} were appended onto the
 fingerprints as complementary information.
-Per-sample dimension was reduced using a principal component analysis (PCA), a linear dimensionality reduction technique 
+These three features represent global molecular properties that are not encoded in Morgan fingerprints.
+Per-sample dimensionality was reduced using a principal component analysis (PCA), a linear dimensionality reduction technique 
 that identifies the n components in the data that are linearly uncorrelated.
 
 The resulting dataset is strongly imbalanced toward the hazardous class across all polymer types.
@@ -250,7 +251,7 @@ visible in the first two principal components.
 Due to this lack of linear separability in a low-dimensional projection, we decided to use the 
 XGBoost classification algorithm as it was shown in the literature to handle high-dimensional data well.
 
-\subsection{Model training} \label{sec:approach}
+\subsection{Model development} \label{sec:approach}
 % Pipeline beschreiben
 The aim of this project is to build a binary classifier, which, given the molecular structure of a plastic 
 associated chemical encoded as a fingerprint,
@@ -270,11 +271,19 @@ The splits were stratified on the target hazard label in order to preserve the p
 class imbalance, and a fixed random seed was used throughout for reproducibility, as implemented in the 
 scikit-learn package \parencite{pedregosaScikitlearnMachineLearning2011}.
 
-To prevent data leakage, preprocessing and classifier training were combined into a single pipeline.
-A nested cross-validation approach was taken to determine the best parameter values for the classifier and
-the preprocessing steps. 
-It combines an inner 5-fold grid search over the hyperparameter grid described below with an outer 5-fold loop
-providing an unbiased estimate of the generalization performance of the model selection \parencite{cawleyOverfittingModelSelection2010}.
+To prevent data leakage, preprocessing and classifier training were combined into a single pipeline, ensuring
+that all steps are re-fit independent on each training fold rather than the full dataset.
+A nested cross-validation approach was taken to jointly determine the best parameter values for the classifier and
+preprocessing steps and to obtain an unbiased estimate of the resulting model selection procedure's generalization
+performance\parencite{cawleyOverfittingModelSelection2010}. 
+The inner loop performes an exhaustive grid search that fits and evaluates the pipeline via five-fold cross-validation
+for each combination of hyperparameters.
+The combination achieving the highest mean balanced accuracy across the folds is selected.
+This inner search is repeated independently of each other across five outer folds, whose held-out balanced accuracy scores are not 
+used during hyperparameter selection but serve as the unbiased performance estimate reported in Section~\ref{subsec:perf}.
+The final hyperparameter configuration reported in Table~\ref{tab:grid} is obtained separatly, by running the
+same inner grid search again on the entire exploration set, independent of the outer nested CV-loop.
+
 First, a Principal Component Analysis (PCA) was applied to transfer the 2048-bit large binary fingerprints 
 into a continous lower-dimensional representation.
 Then, the pipeline applies the Synthetic Minority Over-sampling TEchnique algorithm (SMOTE, \cite{chawlaSMOTESyntheticMinority2002}) combined with
@@ -357,7 +366,7 @@ The final configuration selected the following values: \\
 - n\_estimators=300, and \\
 - colsample\_bylevel=1.0, \\
 achieving a cross-validated 
-balanced accuracy of 0.616 (see section \ref{subsec:perf} and Figure \ref{fig:cv_performance}) over 5 folds. 
+balanced accuracy of 0.616 (see section \ref{subsec:perf} and Figure \ref{fig:cv_performance}) over five folds. 
 Notably, n\_compounds, sampling\_strategy, max\_depth and n\_estimators were selected at the boundary of their respective 
 search ranges.
 The search grid for the sampling\_strategy parameter was not extended further,
@@ -386,7 +395,23 @@ in order to avoid the introduction of additional noise.
 
 \subsection{Data processing}
 As described in Table \ref{tab:grid}, the grid search for the optimal number of principal 
-components resulted in 160. This number of components then explained a total variance of 59.21\%.
+components resulted in 160. This number of components explained a total variance of 59.21\%.
+
+As shown in Figure~\ref{fig:cum_pca}, the cumulative explained variance ratio increases steeply for small
+numbers of components before slowing at around 500 and finally flattening at around 1250 components.
+This reflects the diminishing marginal information content of additional principal components once the
+components representing the majority of variance have been captured.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{pca_cum}
+    \caption{Cumulative explained variance ratio by principal components.
+    Red marker indicates number of components selected by grid search (n=160, corresponding to 59.21\% explained variance.)}
+    \label{fig:cum_pca}
+\end{figure}
+
+Additionally, the influence of the appended molecular descriptors was investigated using the absolute factor loadings
+of the PCA compounds, displayed in Figure~\ref{fig:pca_afl}
 
 Figure \ref{fig:smote} illustrates the effect of the applied resampling strategy on the 
 previously described class imbalance. Before resampling, the training set consisted of 3~323 
@@ -412,24 +437,30 @@ In both cases, the pipelines were trained on the full grid.
 Without resampling, balanced accuracy remains close to the 0.5 chance level across all five outer folds,
 suggesting this classifier mainly predicting the majority class.
 This is further supported by Figure~\ref{fig:cm_nr_test}.
-While resampling increases the overall accuracy, the performance across folds is notably more variable than 
-in the classifier trained without resampling.
-This indicates resampling increased the classifiers ability to discriminate between classes.
+With resampling, the mean balanced accuracy scores increased, 
+indicating it improves the classifiers ability to discriminate between classes.
 Notably, the performance varied between folds, ranging from 
-around 0.454 to around 0.666. The mean balanced accuracy as indicated by the black line reached 0.615.
+around 0.454 to around 0.666.
+Fold 4 performs slightly worse with resampling than without. 
+This reflects the increased sensitivity of the pipeline with resampling to which specific 
+minority-class samples fall into each fold.
+The mean balanced accuracy as indicated by the black line reached 0.615.
 On the independent test set, a balanced accuracy of 0.616 was achieved.
 Overall, the results show substantial variation between the individual cross-validation folds,
 while the test set achieved a similar balanced accuracy score to the mean cross-validated score.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{cv_performance.eps}
+    \includegraphics[width=\textwidth]{cv_performance_outer.eps}
     \caption{Nested cross-validation performance (balanced accuracy across five outer folds)
     of the pipeline trained with and without SMOTEENN resampling. 
     Dashed black line indicates mean balanced accuracy across all folds. 
     Dashed green line indicates balanced accuracy of test set.}
     \label{fig:cv_performance}
 \end{figure}
+
+The corresponding inner cross-validation scores, systematically higher due to their role in hyperparameter
+selection, are shown in Figure~\ref{fig:cv_performance_in}.
 
 The model reached a balanced accuracy score of 0.616 and a ROC-AUC score 
 of 0.723 on the test set. 
@@ -477,7 +508,7 @@ impacts the model reliability.
 \end{figure}
 
 A comparison of the final model against a most-frequent dummy classifier (always 
-predicts the majority class) can be seen in Figure \ref{fig:roc}.
+predicting the majority class) can be seen in Figure \ref{fig:roc}.
 Notably, the model outperforms the dummy classifier in this measure, indicating
 predictive performance above chance.
 The discrepancy between the metrics displayed in Figure \ref{fig:pr} and Figure \ref{fig:roc}
@@ -486,7 +517,7 @@ is further examined in section \ref{sec:discussion}.
 \begin{figure}[htb!]
     \centering
     \includegraphics[width=0.6\textwidth]{roc_auc.eps}
-    \caption{ROC curve for the final XGBoost model on the independet test set, 
+    \caption{ROC curve for the final XGBoost model on the independent test set, 
     compared against a dummy baseline.}
     \label{fig:roc}
 \end{figure}
@@ -536,7 +567,7 @@ rather than robust measures. This is also underlined by the cross validation per
 displayed in Figure \ref{fig:cv_performance}.
 
 Additionally, Figure \ref{fig:pr} and Figure \ref{fig:roc} differ in their conveyed message due to the imbalance.
-The precision is reported at a threshold of 0.5 while the average precision (AP) reported in \ref{fig:pr}
+The precision is reported at a threshold of 0.5 while the average precision (AP) reported in Figure~\ref{fig:pr}
 is averaged over the precision at all classification thresholds, weighted by the recall gained at each.
 For the non-hazardous class, the precision-recall curve stays close to the class occurence over most of the range.
 As a result, the average precision (AP) is only 0.02, 
@@ -641,6 +672,27 @@ can be found under \href{https://github.com/ameliehuebner/plastchem-project}{the
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=\textwidth]{pca_afl.eps}
+    \caption{Comparison of the absolute factor loadings of the three additionally included physiochemical properties
+    (Molecular weight, TPSA and complexity) with the maximum factor loading of the Morgan fingerprint features for each of 
+    the first ten principal components.
+    }
+    \label{fig:pca_afl}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{cv_performance_inner.eps}
+    \caption{Balanced accuracy of the inner cross-validation (used for hyperparameter selection within each
+    outer fold), shown for comparison with the outer nested CV scores in Figure~\ref{fig:cv_performance}.
+    Systematically higher and less variable than the outer scores, illustrating the optimistic selection bias nested CV
+    is designed to correct for.}
+    \label{fig:cv_performance_in}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.6\textwidth]{cm_test.eps}
     \caption{Confusion matrix for the trained model on the independent test set (n=1425).}
     \label{fig:cm_test}
@@ -707,19 +759,4 @@ degree programme.
 	\par
 	\smallskip  
 	\raggedleft{Amelie Hübner}}
-
-
- 
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
